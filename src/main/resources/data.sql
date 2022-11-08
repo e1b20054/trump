@@ -1,0 +1,1 @@
+INSERT INTO MATCH (name) VALUES ('CPU');
