@@ -1,0 +1,4 @@
+CREATE TABLE Match(
+  id IDENTITY,
+  name VARCHAR NOT NULL
+);
