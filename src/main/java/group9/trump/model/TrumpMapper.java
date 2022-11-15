@@ -11,6 +11,6 @@ public interface TrumpMapper {
   @Select("SELECT * from trump where id = #{id};")
   Trump selectById(int id);
 
-  @Select("SELECT * from trump")
+  @Select("SELECT * from trump;")
   ArrayList<Trump> selectAll();
 }
