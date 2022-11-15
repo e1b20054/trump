@@ -2,7 +2,7 @@ package group9.trump.model;
 
 public class Trump {
   int id;
-  int num;
+  int number;
   String mark;
 
   public int getId() {
@@ -11,11 +11,11 @@ public class Trump {
   public void setId(int id) {
     this.id = id;
   }
-  public int getNum() {
-    return num;
+  public int getNumber() {
+    return number;
   }
-  public void setNum(int num) {
-    this.num = num;
+  public void setNumber(int num) {
+    this.number = num;
   }
   public String getMark() {
     return mark;

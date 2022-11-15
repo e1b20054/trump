@@ -31,13 +31,28 @@ public class TrumpAuthConfiguration {
         .password("$2y$10$ngxCDmuVK1TaGchiYQfJ1OAKkd64IH6skGsNw1sLabrTICOHPxC0e")
         .roles("USER")
         .build();
+    UserDetails user3 = users
+        .username("user3")
+        .password("$2y$10$ngxCDmuVK1TaGchiYQfJ1OAKkd64IH6skGsNw1sLabrTICOHPxC0e")
+        .roles("USER", "MANAGER")
+        .build();
+    UserDetails user4 = users
+        .username("user4")
+        .password("$2y$10$ngxCDmuVK1TaGchiYQfJ1OAKkd64IH6skGsNw1sLabrTICOHPxC0e")
+        .roles("USER")
+        .build();
+    UserDetails user5 = users
+        .username("user5")
+        .password("$2y$10$ngxCDmuVK1TaGchiYQfJ1OAKkd64IH6skGsNw1sLabrTICOHPxC0e")
+        .roles("USER", "MANAGER")
+        .build();
     UserDetails admin = users
         .username("admin")
         .password("$2y$10$ngxCDmuVK1TaGchiYQfJ1OAKkd64IH6skGsNw1sLabrTICOHPxC0e")
         .roles("ADMIN")
         .build();
 
-    return new InMemoryUserDetailsManager(user1, user2, admin);
+    return new InMemoryUserDetailsManager(user1, user2, user3, user4, user5, admin);
   }
 
   @Bean
