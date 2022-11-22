@@ -24,3 +24,15 @@ CREATE TABLE CHAMBER(
   name VARCHAR NOT NULL,
   win INT NOT NULL
 );
+
+CREATE TABLE Deck(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL
+);
+
+CREATE TABLE Tehuda(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL
+);
