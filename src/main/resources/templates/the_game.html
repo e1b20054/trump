@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>the_game</title>
+</head>
+
+<body>
+  <a href="/logout">ログアウト</a>
+  <h1>The_GAME!</h1>
+
+  <h2>場</h2>
+
+
+  <div th:if="${the_game}">
+    <h2>デッキ</h2>
+    <div th:each="the_game : ${the_game}">
+      <tr>
+        <td>([[${the_game.number}]])</td>
+      </tr>
+    </div>
+  </div>
+
+  <div th:if="${tehuda}">
+    <h2>手札</h2>
+    <div th:each="tehuda : ${tehuda}" style="color: red; display: inline-block; _display: inline;">
+      ([[${tehuda.number}]])
+    </div>
+  </div>
+
+  <form action="/the_game/shouhi" method="post">
+    <input type="number" name="id" />の
+    <input type="number" name="te" />
+    <input type="submit" value="提出">
+  </form>
+
+</body>
+
+</html>

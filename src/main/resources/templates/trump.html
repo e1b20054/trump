@@ -10,37 +10,7 @@
   <a href="/logout">ログアウト</a>
   <h1>Trump GAME!</h1>
 
-  <div th:if="${the_game}">
-    <h2>The_Game</h2>
-    <div th:each="the_game : ${the_game}">
-      <tr>
-        <td>id:[[${the_game.id}]]</td>
-        <td>num:[[${the_game.number}]]</td>
-      </tr>
-    </div>
-  </div>
-
-  <div th:if="${trump}">
-    <h2>Trump</h2>
-    <div th:each="trump : ${trump}">
-      <tr>
-        <td>id:[[${trump.id}]]</td>
-        <td>num:[[${trump.number}]]</td>
-        <td>mark:[[${trump.mark}]]</td>
-      </tr>
-    </div>
-  </div>
-
-  <div th:if="${chamber}">
-    <h2>Chamber</h2>
-    <div th:each="chamber : ${chamber}">
-      <tr>
-        <td>id:[[${chamber.id}]]</td>
-        <td>name:[[${chamber.name}]]</td>
-        <td>win:[[${chamber.win}]]</td>
-      </tr>
-    </div>
-  </div>
+  <a href="/the_game">the_game</a><br>
 
 </body>
 
