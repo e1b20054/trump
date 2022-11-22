@@ -14,4 +14,7 @@ public interface ChamberMapper {
 
   @Select("SELECT * from chamber;")
   ArrayList<Chamber> selectAll();
+
+  @Select("SELECT * from chamber where name = #{name};")
+  Chamber selectByName(String name);
 }

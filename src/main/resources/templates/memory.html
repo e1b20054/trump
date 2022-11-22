@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>memory</title>
+</head>
+
+<body>
+  <h1>神経衰弱 (Memory Game)!</h1>
+
+  <div th:if="${chamber}">
+    <h2>ようこそ [[${chamber.name}]]</h2>
+    <div>
+      <h3>あなたの戦歴</h3>
+    </div>
+    <div>現在[[${chamber.win}]]勝</div>
+  </div>
+
+  <br />
+
+  <div>
+    <h3>待機部屋</h3>
+  </div>
+
+  <br />
+
+  <div>
+    <h3>入室</h3>
+  </div>
+  <div><a href="/memoryMatch">待機部屋へ</a></div>
+  <div>※順番に部屋に割り当てられます.</div>
+  <div>４人がそろう, または初めの入室者が「スタート」を押すとゲームが開始します.</div>
+</body>
+
+</html>
