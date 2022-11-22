@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>memory</title>
+</head>
+
+<body>
+  <h1>Let's Fight!</h1>
+  <h2 th:if="${user}">Hi! [[${user}]]</h2>
+
+  <div th:if="${trump}">
+    <h2>場</h2>
+    <div th:each="trump : ${trump}">
+      <tr>
+        <td>[[${trump.number}]] </td>
+        <td>[[${trump.mark}]]</td>
+      </tr>
+    </div>
+  </div>
+</body>
+
+</html>
