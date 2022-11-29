@@ -44,3 +44,20 @@ CREATE TABLE MemoryDeck(
   open boolean NOT NULL,
   get boolean NOT NULL
 );
+
+CREATE TABLE Shitinarabe(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL,
+  name INT,
+  state VARCHAR
+);
+
+CREATE TABLE Smatch(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL,
+  name INT,
+  nextuser INT,
+  isActive boolean
+);

@@ -50,7 +50,6 @@ INSERT INTO TRUMP (number, mark) VALUES (10, '♦');
 INSERT INTO TRUMP (number, mark) VALUES (11, '♦');
 INSERT INTO TRUMP (number, mark) VALUES (12, '♦');
 INSERT INTO TRUMP (number, mark) VALUES (13, '♦');
-INSERT INTO TRUMP (number, mark) VALUES (0, '🃏');
 INSERT INTO THE_GAME (number) VALUES (2);
 INSERT INTO THE_GAME (number) VALUES (3);
 INSERT INTO THE_GAME (number) VALUES (4);
