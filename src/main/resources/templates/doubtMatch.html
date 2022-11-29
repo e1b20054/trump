@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>doubtMatch</title>
+</head>
+
+<body>
+  <h1>待機部屋</h1>
+
+  <div th:if="${user}">
+    <h2>ようこそ [[${user}]]</h2>
+    <h3>全員が揃うまで少しお待ちください</h3>
+  </div>
+
+  <br />
+
+  <div>
+    <h3>対戦相手</h3>
+  </div>
+
+  <br />
+
+  <div>
+    <h3><a href="/doubtFightStart">スタート</a></h3>
+  </div>
+  <div>あなたは最初の入室者です. </div>
+  <div>準備ができたら「スタート」を押してください. </div>
+</body>
+
+</html>

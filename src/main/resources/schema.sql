@@ -81,3 +81,14 @@ CREATE TABLE Smatch(
   nextuser INT,
   isActive boolean
 );
+
+CREATE TABLE Field(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL
+);
+
+CREATE TABLE Turn(
+  id IDENTITY,
+  turn INT NOT NULL
+);

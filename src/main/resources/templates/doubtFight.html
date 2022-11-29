@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>doubtFight</title>
+</head>
+
+<body>
+  <h1>Let's Fight!</h1>
+  <h2 th:if="${user}">Hi! [[${user}]]</h2>
+
+  <h2>場</h2>
+  <div th:if="${field}">
+    [[${field.number}]][[${field.mark}]]
+  </div>
+
+  <div th:if="${tehuda}">
+    <h2>手札</h2>
+    <div>
+      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♠' || tehuda.mark=='♣'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♥' || tehuda.mark=='♦'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+      </form>
+    </div>
+</body>
+
+</html>
