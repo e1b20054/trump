@@ -12,6 +12,33 @@
 
   <h2>場</h2>
 
+  <div th:if="${the_game_field1}">
+    <h3>1</h3>
+    <div th:each="the_game_field1 : ${the_game_field1}" style="color: red; display: inline-block; _display: inline;">
+      ([[${the_game_field1.number}]])
+    </div>
+  </div>
+
+  <div th:if="${the_game_field2}">
+    <h3>2</h3>
+    <div th:each="the_game_field2 : ${the_game_field2}" style="color: red; display: inline-block; _display: inline;">
+      ([[${the_game_field2.number}]])
+    </div>
+  </div>
+
+  <div th:if="${the_game_field3}">
+    <h3>3</h3>
+    <div th:each="the_game_field3 : ${the_game_field3}" style="color: red; display: inline-block; _display: inline;">
+      ([[${the_game_field3.number}]])
+    </div>
+  </div>
+
+  <div th:if="${the_game_field4}">
+    <h3>4</h3>
+    <div th:each="the_game_field4 : ${the_game_field4}" style="color: red; display: inline-block; _display: inline;">
+      ([[${the_game_field4.number}]])
+    </div>
+  </div>
 
   <div th:if="${the_game}">
     <h2>デッキ</h2>
@@ -34,6 +61,16 @@
     <input type="number" name="te" />
     <input type="submit" value="提出">
   </form>
+
+  <div th:if="${error}">
+    [[${error}]]
+  </div>
+
+  <div th:if="${end}">
+    <form action="/the_game/end" method="post">
+      <input type="submit" value="end">
+    </form>
+  </div>
 
 </body>
 
