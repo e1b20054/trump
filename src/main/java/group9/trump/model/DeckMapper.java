@@ -16,9 +16,12 @@ public interface DeckMapper {
   ArrayList<Deck> selectAll();
 
   @Insert("INSERT INTO deck (number,mark) VALUES (#{number},#{mark});")
-  void insertDeck(int number,String mark);
+  void insertDeck(int number, String mark);
 
   @Delete("DELETE FROM deck WHERE number =#{number}")
-  boolean deleteDeck(int number);
+  boolean deleteDeckByNum(int number);
+
+  @Delete("DELETE FROM deck;")
+  boolean deleteDeck();
 
 }
