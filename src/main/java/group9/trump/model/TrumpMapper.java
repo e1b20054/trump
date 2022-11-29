@@ -13,4 +13,7 @@ public interface TrumpMapper {
 
   @Select("SELECT * from trump;")
   ArrayList<Trump> selectAll();
+
+  @Select("SELECT * from trump where number > 0 ;")
+  ArrayList<Trump> selectAllByNotJoker();
 }
