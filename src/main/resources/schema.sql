@@ -36,3 +36,11 @@ CREATE TABLE Tehuda(
   number INT NOT NULL,
   mark VARCHAR NOT NULL
 );
+
+CREATE TABLE MemoryDeck(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL,
+  open boolean NOT NULL,
+  get boolean NOT NULL
+);
