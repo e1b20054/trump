@@ -37,8 +37,8 @@ public interface MemoryDeckMapper {
   @Select("SELECT * from MemoryDeck where get = TRUE;")
   ArrayList<MemoryDeck> selectByGetTrue();
 
-  @Update("UPDATE MemoryDeck SET get = 'TRUE' WHERE id = #{id};")
-  void updateByGetTrueId(int id);
+  @Update("UPDATE MemoryDeck SET get = 'TRUE', getter = #{getter} WHERE id = #{id};")
+  void updateByGetTrueId(int id, String getter);
 
   @Delete("DELETE FROM MemoryDeck;")
   void deleteAll();
