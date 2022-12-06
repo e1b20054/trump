@@ -3,6 +3,8 @@ package group9.trump.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 //import java.util.List;
+import java.security.Principal;
+import group9.trump.model.Sgame;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ import group9.trump.model.ShitinarabeMapper;
 import group9.trump.model.Smatch;
 //import group9.trump.model.SmatchMapper;
 //import group9.trump.model.Tehuda;
+import group9.trump.model.ChamberMapper;
+import group9.trump.model.Chamber;
 
 @Controller
 public class ShitinarabeController {
@@ -36,11 +40,13 @@ public class ShitinarabeController {
   // @Autowired
   // SmatchMapper SMMapper;
 
-  @GetMapping("/daihugo")
-  public String trump() {
-    // ArrayList<Trump> tehuda = new ArrayList<>();
+  @Autowired
+  ChamberMapper CMapper;
+
+  @GetMapping("/shitinarabe")
+  public String trump(Principal prin, ModelMap model) {
     ArrayList<Trump> trumps = TMapper.selectAll();
-    Collections.shuffle(trumps);
+    Collections.shuffle(trumps); // トランプシャッフル
     Shitinarabe tmp = new Shitinarabe();
     Trump card = new Trump();
     for (int i = 1; i < 5; i++) {
@@ -53,6 +59,11 @@ public class ShitinarabeController {
         SMapper.insertShitinarabe(tmp.getNumber(), tmp.getMark(), tmp.getName(), tmp.getState());
       }
     }
+
+    String loginUser = prin.getName();
+    int loginId = CMapper.selectIdByName(loginUser);
+    ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginId);
+    model.addAttribute("tehuda", tehuda);
     /*
      * model.addAttribute("tehuda", tehuda);
      * for (j = i; j < trumps.size(); j++) {
@@ -64,7 +75,31 @@ public class ShitinarabeController {
      * ArrayList<Deck> trump = DMapper.selectAll();
      * model.addAttribute("trump", trump);
      */
-    return "test.html";
+    return "shitinarabe.html";
+  }
+
+  public String card(@RequestParam String mark, Integer number, Principal prin, ModelMap model) {
+    Boolean flag;
+    Sgame sgame = new Sgame();
+    Shitinarabe right = new Shitinarabe();
+    Shitinarabe left = new Shitinarabe();
+
+    if (number == 13) {
+      right = SMapper.selectCard(mark, number - 12);
+    } else {
+      right = SMapper.selectCard(mark, number);
+    }
+    if (number == 1) {
+      left = SMapper.selectCard(mark, number + 12);
+    } else {
+      right = SMapper.selectCard(mark, number + 12);
+    }
+
+    String loginUser = prin.getName();
+    int loginId = CMapper.selectIdByName(loginUser);
+    ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginId);
+    model.addAttribute("tehuda", tehuda);
+    return "shitinarabe.html";
   }
 
   // @PostMapping("/ /shouhi")

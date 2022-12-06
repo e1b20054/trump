@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Shitinarabe</title>
+</head>
+
+
+<div th:each="Tehuda,stat:${tehuda}">
+  <tr>
+    <td>id:[[${Tehuda.name}]]</td>
+    <td>mark:[[${Tehuda.mark}]]</td>
+    <td>num:[[${Tehuda.number}]]</td>
+    <a th:href="@{/card(mark=${Tehuda.mark},number=${Tehuda.number})}">選択</a>
+  </tr>
+</div>
+
+</html>
