@@ -22,11 +22,20 @@
 
   <br />
 
-  <div>
-    <h3><a href="/doubtFightStart">スタート</a></h3>
-  </div>
-  <div>あなたは最初の入室者です. </div>
-  <div>準備ができたら「スタート」を押してください. </div>
+  <tbody sec:authorize="hasRole('ROLE_ADMIN')">
+    <div>
+      <h3><a href="/doubtFightStart">スタート</a></h3>
+      <div>あなたがスタートすることで手札が配られます.</div>
+    </div>
+  </tbody>
+
+  <tbody sec:authorize="hasRole('ROLE_USER')">
+    <div>
+      <h3><a href="/doubtFight">参加する</a></h3>
+      <div>管理者がスタートしています. 参加するを押して参加しましょう.</div>
+    </div>
+  </tbody>
+
 </body>
 
 </html>

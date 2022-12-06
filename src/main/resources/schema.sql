@@ -54,7 +54,9 @@ CREATE TABLE Deck(
 CREATE TABLE Tehuda(
   id IDENTITY,
   number INT NOT NULL,
-  mark VARCHAR NOT NULL
+  mark VARCHAR NOT NULL,
+  turn INT,
+  name VARCHAR
 );
 
 CREATE TABLE MemoryDeck(
@@ -85,13 +87,10 @@ CREATE TABLE Smatch(
 
 CREATE TABLE Field(
   id IDENTITY,
-  number INT NOT NULL,
-  mark VARCHAR NOT NULL
-);
-
-CREATE TABLE Turn(
-  id IDENTITY,
-  turn INT NOT NULL
+  number INT,
+  mark VARCHAR,
+  turn INT,
+  name VARCHAR
 );
 
 CREATE TABLE MemoryChamber(
