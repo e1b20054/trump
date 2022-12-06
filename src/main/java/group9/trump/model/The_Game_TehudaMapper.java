@@ -21,4 +21,10 @@ public interface The_Game_TehudaMapper {
   @Delete("DELETE FROM the_game_tehuda WHERE number =#{number}")
   boolean deleteTehuda(int number);
 
+  @Delete("DELETE FROM the_game_tehuda")
+  boolean delete();
+
+  @Select("SELECT count(*) from the_game_tehuda;")
+  int selectCount();
+
 }

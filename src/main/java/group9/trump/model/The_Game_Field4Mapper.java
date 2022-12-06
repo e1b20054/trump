@@ -9,11 +9,6 @@ import org.apache.ibatis.annotations.Delete;
 
 @Mapper
 public interface The_Game_Field4Mapper {
-  @Select("SELECT max(id) from the_game_field4;")
-  int selectMaxId();
-
-  @Select("SELECT number from the_game_field3 where id = (SELECT max(id) from the_game_field3);")
-  int selectNumber();
 
   @Select("SELECT * from the_game_field4;")
   ArrayList<The_Game_Field4> selectAll();
@@ -21,7 +16,10 @@ public interface The_Game_Field4Mapper {
   @Insert("INSERT INTO the_game_field4 (number) VALUES (#{number});")
   void insertField4(int number);
 
-  @Delete("DELETE FROM the_game_field4 WHERE id =#{id}")
-  boolean deleteField4(int id);
+  @Select("SELECT number from the_game_field4 order by id desc limit 1;")
+  int selectNumber();
+
+  @Delete("DELETE FROM the_game_field4 WHERE number =#{number}")
+  boolean deleteField4(int number);
 
 }

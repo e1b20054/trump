@@ -21,4 +21,10 @@ public interface The_Game_DeckMapper {
   @Delete("DELETE FROM the_game_deck WHERE number =#{number}")
   boolean deleteDeck(int number);
 
+  @Delete("DELETE FROM the_game_deck")
+  boolean delete();
+
+  @Select("SELECT count(*) from the_game_deck;")
+  int selectCount();
+
 }

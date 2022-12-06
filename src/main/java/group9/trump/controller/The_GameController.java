@@ -1,7 +1,7 @@
 package group9.trump.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
+//import java.util.Collections;
 //import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,29 +52,42 @@ public class The_GameController {
   @GetMapping("/the_game")
   public String trump(ModelMap model) {
     int i = 0;
-    for (int x = TGF1Mapper.selectMaxId(); x > 1; x--) {
-      TGF1Mapper.deleteField1(x);
+    int x1 = TGF1Mapper.selectNumber();
+    int x2 = TGF2Mapper.selectNumber();
+    int x3 = TGF3Mapper.selectNumber();
+    int x4 = TGF4Mapper.selectNumber();
+    TGDMapper.delete();
+    TGTMapper.delete();
+    // for (int x = TGF4Mapper.selectMaxId(); x > 1; x--) {
+    // TGF1Mapper.deleteField1(x);
+    // }
+    while (x1 > 1) {
+      TGF1Mapper.deleteField1(x1);
+      x1 = TGF1Mapper.selectNumber();
     }
     ArrayList<The_Game_Field1> the_game_field1 = TGF1Mapper.selectAll();
     model.addAttribute("the_game_field1", the_game_field1);
-    for (int x = TGF2Mapper.selectMaxId(); x > 1; x--) {
-      TGF1Mapper.deleteField1(x);
+    while (x2 > 1) {
+      TGF2Mapper.deleteField2(x2);
+      x2 = TGF2Mapper.selectNumber();
     }
     ArrayList<The_Game_Field2> the_game_field2 = TGF2Mapper.selectAll();
     model.addAttribute("the_game_field2", the_game_field2);
-    for (int x = TGF3Mapper.selectMaxId(); x > 1; x--) {
-      TGF1Mapper.deleteField1(x);
+    while (x3 < 100) {
+      TGF3Mapper.deleteField3(x3);
+      x3 = TGF3Mapper.selectNumber();
     }
     ArrayList<The_Game_Field3> the_game_field3 = TGF3Mapper.selectAll();
     model.addAttribute("the_game_field3", the_game_field3);
-    for (int x = TGF4Mapper.selectMaxId(); x > 1; x--) {
-      TGF1Mapper.deleteField1(x);
+    while (x4 < 100) {
+      TGF4Mapper.deleteField4(x4);
+      x4 = TGF4Mapper.selectNumber();
     }
     ArrayList<The_Game_Field4> the_game_field4 = TGF4Mapper.selectAll();
     model.addAttribute("the_game_field4", the_game_field4);
     ArrayList<The_Game> tehuda = new ArrayList<>();
     ArrayList<The_Game> the_game = TGMapper.selectAll();
-    Collections.shuffle(the_game);
+    // Collections.shuffle(the_game);
     // model.addAttribute("the_game", the_game);
     while (8 > tehuda.size()) {
       tehuda.add(the_game.get(i));
@@ -92,6 +105,7 @@ public class The_GameController {
 
   @PostMapping("/the_game/shouhi")
   public String trump2(ModelMap model, @RequestParam Integer id, @RequestParam Integer te) {
+    int a = 6;
     int p10 = te + 10;
     int m10 = te - 10;
     int n1 = TGF1Mapper.selectNumber();
@@ -125,8 +139,12 @@ public class The_GameController {
     model.addAttribute("the_game_field4", the_game_field4);
     // model.addAttribute("the_game", the_game);
     model.addAttribute("tehuda", tehuda);
-    if (tehuda.size() <= 6) {
-      String end = "a";
+    int d = TGDMapper.selectCount();
+    if (d == 0) {
+      a = 7;
+    }
+    if (tehuda.size() <= a) {
+      String end = "end";
       model.addAttribute("end", end);
     }
     return "the_game.html";
@@ -143,14 +161,33 @@ public class The_GameController {
     model.addAttribute("the_game_field3", the_game_field3);
     model.addAttribute("the_game_field4", the_game_field4);
     ArrayList<The_Game_Deck> the_game = TGDMapper.selectAll();
-    for (int i = 6; i < 8; i++) {
-      TGTMapper.insertTehuda(the_game.get(0).getNumber());
-      TGDMapper.deleteDeck(the_game.get(0).getNumber());
-      the_game.remove(0);
+    for (int i = TGTMapper.selectCount(); i < 8; i++) {
+      if (TGDMapper.selectCount() == 0) {
+        i = 100;
+      } else {
+        TGTMapper.insertTehuda(the_game.get(0).getNumber());
+        TGDMapper.deleteDeck(the_game.get(0).getNumber());
+        the_game.remove(0);
+      }
     }
     ArrayList<The_Game_Tehuda> tehuda = TGTMapper.selectAll();
     model.addAttribute("tehuda", tehuda);
     return "the_game.html";
+  }
+
+  // --------------------------------------
+  @PostMapping("/the_game/result")
+  public String result(ModelMap model) {
+    int d = TGDMapper.selectCount();
+    int t = TGTMapper.selectCount();
+    String win = "win";
+    String lose = "lose";
+    if (d + t < 10) {
+      model.addAttribute("win", win);
+    } else {
+      model.addAttribute("lose", lose);
+    }
+    return "the_gameResult.html";
   }
 
 }
