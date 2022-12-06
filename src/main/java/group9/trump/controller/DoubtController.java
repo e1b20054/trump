@@ -22,8 +22,6 @@ import group9.trump.model.TehudaMapper;
 import group9.trump.model.Tehuda;
 import group9.trump.model.FieldMapper;
 import group9.trump.model.Field;
-import group9.trump.model.TurnMapper;
-import group9.trump.model.Turn;
 
 @Controller
 public class DoubtController {
@@ -43,8 +41,7 @@ public class DoubtController {
   @Autowired
   FieldMapper FMapper;
 
-  @Autowired
-  TurnMapper TUMapper;
+  int turn = 13;
 
   @GetMapping("/doubt")
   public String doubt(Principal prin, ModelMap model) {
@@ -69,38 +66,88 @@ public class DoubtController {
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
     int i = 0;
-    ArrayList<Trump> tehuda = new ArrayList<>();
-    ArrayList<Trump> trumps = TMapper.selectAll();
+    ArrayList<Tehuda> Tehuda = new ArrayList<>();
+    ArrayList<Tehuda> trumps = TMapper.selectAllTehuda();
     Collections.shuffle(trumps);
-    while (13 > tehuda.size()) {
-      tehuda.add(trumps.get(i));
+
+    while (52 > Tehuda.size()) {
+      Tehuda.add(trumps.get(i));
       i++;
     }
-    for (int j = i; j < trumps.size(); j++) {
-      DMapper.insertDeck(trumps.get(j).getNumber(), trumps.get(j).getMark());
+
+    for (int k = 0; k < Tehuda.size(); k = k + 4) {
+      TTMapper.insertTehuda(Tehuda.get(k).getNumber(), Tehuda.get(k).getMark(), "user1");
+      TTMapper.insertTehuda(Tehuda.get(k + 1).getNumber(), Tehuda.get(k + 1).getMark(), "user2");
+      TTMapper.insertTehuda(Tehuda.get(k + 2).getNumber(), Tehuda.get(k + 2).getMark(), "user3");
+      TTMapper.insertTehuda(Tehuda.get(k + 3).getNumber(), Tehuda.get(k + 3).getMark(), "admin");
     }
-    for (int k = 0; k < tehuda.size(); k++) {
-      TTMapper.insertTehuda(tehuda.get(k).getNumber(), tehuda.get(k).getMark());
-    }
-    tehuda = TTMapper.selectAllOrder();
-    model.addAttribute("tehuda", tehuda);
+
+    Tehuda = TTMapper.selectAllOrder();
+    model.addAttribute("tehuda", Tehuda);
     ArrayList<Deck> trump = DMapper.selectAll();
     model.addAttribute("trump", trump);
     return "doubtFight.html";
   }
 
   @PostMapping("/doubtFight")
-  public String cardSubmit(Principal prin, ModelMap model, @RequestParam int selectedcard) {
+  public String doubtFight(Principal prin, ModelMap model, @RequestParam int selectedcard) {
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
+    turn++;
+    if (turn == 14) {
+      turn = 1;
+    }
     Tehuda putcard = TTMapper.selectById(selectedcard);
     TTMapper.deleteTehudaById(selectedcard);
 
-    FMapper.insertField(putcard.getNumber(), putcard.getMark());
+    FMapper.insertField(putcard.getNumber(), putcard.getMark(), turn, loginUser);
     Field field = FMapper.selectFieldOne();
     model.addAttribute("field", field);
-    ArrayList<Trump> tehuda = TTMapper.selectAllOrder();
-    model.addAttribute("tehuda", tehuda);
+    ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
+    model.addAttribute("tehuda", Tehuda);
+    if (Tehuda.size() == 0) {
+      Chamber chamber = CMapper.selectByName(loginUser);
+      CMapper.updateWin(chamber.getWin() + 1);
+      chamber = CMapper.selectByName(loginUser);
+      model.addAttribute("chamber", chamber);
+      return "doubtEnd.html";
+    }
+    return "doubtFight.html";
+  }
+
+  @GetMapping("/doubtCall")
+  public String doubtCall(Principal prin, ModelMap model) {
+    String result = "";
+    String user = "";
+    int i = 1;
+
+    String loginUser = prin.getName();
+    model.addAttribute("user", loginUser);
+
+    Field field = FMapper.selectFieldOne();
+    Field first = FMapper.selectFieldFirst();
+    Field insert;
+    if (field.getTurn() == field.getNumber()) {
+      result = "成功";
+      user = field.getUser();
+      for (i = first.getId(); i <= field.getId(); i++) {
+        insert = FMapper.selectById(i);
+        TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
+      }
+    } else {
+      result = "失敗";
+      user = loginUser;
+      for (i = first.getId(); i <= field.getId(); i++) {
+        insert = FMapper.selectById(i);
+        TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
+      }
+    }
+    FMapper.deleteField();
+    model.addAttribute("user", user);
+    model.addAttribute("result", result);
+    model.addAttribute("field", field);
+    ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
+    model.addAttribute("tehuda", Tehuda);
     return "doubtFight.html";
   }
 }

@@ -10,23 +10,27 @@
   <h1>Let's Fight!</h1>
   <h2 th:if="${user}">Hi! [[${user}]]</h2>
 
+  <div th:if="${result}">
+    <font size="3" color="red"> ダウト宣言がされました。結果は[[${result}]]です。[[${user}]]に場のカードが戻されます</font>
+  </div>
+
   <h2>場</h2>
   <div th:if="${field}">
-    [[${field.number}]][[${field.mark}]]
+    [[${field.turn}]] を出しました。次は [[${field.turn}+1]] です。(※14 は 1 とみなす)
   </div>
 
   <div th:if="${tehuda}">
     <h2>手札</h2>
-    <div>
+    <div th:if="${user=='user1'}">
       <form method="post" th:action="@{/doubtFight}" th:object="${card}">
-        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♠' || tehuda.mark=='♣'}"
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user1'}"
           style="display: inline-block; _display: inline;">
           <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
             [[${tehuda.number}]][[${tehuda.mark}]]
           </button>
           &nbsp;
         </label>
-        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♥' || tehuda.mark=='♦'}"
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user1'}"
           style="display: inline-block; _display: inline;">
           <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
             [[${tehuda.number}]][[${tehuda.mark}]]
@@ -35,6 +39,62 @@
         </label>
       </form>
     </div>
+    <div th:if="${user=='user2'}">
+      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user2'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user2'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+      </form>
+    </div>
+    <div th:if="${user=='user3'}">
+      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user3'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user3'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+      </form>
+    </div>
+    <div th:if="${user=='admin'}">
+      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='admin'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='admin'}"
+          style="display: inline-block; _display: inline;">
+          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+            [[${tehuda.number}]][[${tehuda.mark}]]
+          </button>
+          &nbsp;
+        </label>
+      </form>
+    </div>
+    <p><a href="/doubtCall">ダウト宣言</a></p>
+  </div>
 </body>
 
 </html>

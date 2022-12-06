@@ -4,6 +4,8 @@ public class Tehuda {
   int id;
   int number;
   String mark;
+  int turn;
+  String name;
 
   public int getId() {
     return id;
@@ -29,4 +31,19 @@ public class Tehuda {
     this.mark = mark;
   }
 
+  public int getTurn() {
+    return turn;
+  }
+
+  public void setTurn(int turn) {
+    this.turn = turn;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 }

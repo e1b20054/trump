@@ -16,10 +16,10 @@ public interface TehudaMapper {
   ArrayList<Tehuda> selectAll();
 
   @Select("SELECT * from tehuda ORDER BY number;")
-  ArrayList<Trump> selectAllOrder();
+  ArrayList<Tehuda> selectAllOrder();
 
-  @Insert("INSERT INTO tehuda (number,mark) VALUES (#{number},#{mark});")
-  void insertTehuda(int number, String mark);
+  @Insert("INSERT INTO tehuda (number,mark,name) VALUES (#{number},#{mark},#{name});")
+  void insertTehuda(int number, String mark, String name);
 
   @Delete("DELETE FROM tehuda;")
   boolean deleteTehuda();
