@@ -62,7 +62,8 @@ CREATE TABLE MemoryDeck(
   number INT NOT NULL,
   mark VARCHAR NOT NULL,
   open boolean NOT NULL,
-  get boolean NOT NULL
+  get boolean NOT NULL,
+  getter VARCHAR
 );
 
 CREATE TABLE Shitinarabe(
@@ -91,4 +92,11 @@ CREATE TABLE Field(
 CREATE TABLE Turn(
   id IDENTITY,
   turn INT NOT NULL
+);
+
+CREATE TABLE MemoryChamber(
+  id IDENTITY,
+  name VARCHAR NOT NULL,
+  roomNo INT NOT NULL,
+  oya boolean NOT NULL
 );
