@@ -6,6 +6,7 @@ public class Field {
   String mark;
   int turn;
   String name;
+  String nextname;
 
   public int getId() {
     return id;
@@ -45,5 +46,13 @@ public class Field {
 
   public void setUser(String name) {
     this.name = name;
+  }
+
+  public String getNextname() {
+    return nextname;
+  }
+
+  public void setNextname(String nextname) {
+    this.nextname = nextname;
   }
 }

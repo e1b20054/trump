@@ -15,8 +15,8 @@ public interface FieldMapper {
   @Select("SELECT * from field;")
   ArrayList<Field> selectAll();
 
-  @Insert("INSERT INTO Field (number,mark,turn,name) VALUES (#{number},#{mark},#{turn},#{name});")
-  void insertField(int number, String mark, int turn, String name);
+  @Insert("INSERT INTO Field (number,mark,turn,name,nextname) VALUES (#{number},#{mark},#{turn},#{name},#{nextname});")
+  void insertField(int number, String mark, int turn, String name, String nextname);
 
   @Delete("DELETE FROM Field")
   boolean deleteField();
@@ -30,7 +30,13 @@ public interface FieldMapper {
   @Select("SELECT turn FROM Field ORDER BY id DESC LIMIT 1;")
   int selectTurnOne();
 
+  @Select("SELECT number FROM Field ORDER BY id DESC LIMIT 1;")
+  int selectNumberOne();
+
   @Select("SELECT name FROM Field ORDER BY id DESC LIMIT 1;")
   String selectUserOne();
+
+  @Select("SELECT nextname FROM Field ORDER BY id DESC LIMIT 1;")
+  String selectNextOne();
 
 }

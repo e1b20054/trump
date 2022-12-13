@@ -85,7 +85,8 @@ CREATE TABLE Field(
   number INT,
   mark VARCHAR,
   turn INT,
-  name VARCHAR
+  name VARCHAR,
+  nextname VARCHAR
 );
 
 CREATE TABLE MemoryChamber(
