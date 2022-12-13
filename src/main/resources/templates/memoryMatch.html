@@ -8,9 +8,10 @@
   <script>
     window.onload = function () {
       var sse = new EventSource('/memoryWaitSse');
-      //sse.onmessage = function () {
-      //window.location.href('memoryFight.html');
-      //}
+      sse.onmessage = function () {
+        console.log(event.data);
+        var match = JSON.parse(event.data);
+      }
     }
   </script>
 </head>

@@ -12,21 +12,21 @@
   <h2 th:if="${user}">
     Field of [[${user}]]
     <div th:if="${openCnt}" style="display: inline-block; _display: inline;">
-      &emsp;&emsp;&emsp;<a href="/memoryNext">次へ</a>
+      &emsp;&emsp;&emsp;<a href="/memoryNext1">次へ</a>
     </div>
   </h2>
   <div th:each="Deck:${Deck}" style="display: inline-block; _display: inline;">
     <div sec:authorize="hasRole('ROLE_USER')">
       <div th:if="${Deck.getOpen() == false && Deck.getGet() == false}">
         &emsp;&nbsp;
-        <a th:href="@{/select(id=${Deck.id})}" style="text-decoration:none;">
+        <a th:href="@{/memorySelect1(id=${Deck.id})}" style="text-decoration:none;">
           <img th:src="@{/image/背面.png}" width="60" height="85" loading=”lazy”>
         </a>
       </div>
     </div>
     <div sec:authorize="hasRole('ROLE_ADMIN')">
       <div th:if="${Deck.getOpen() == false && Deck.getGet() == false}">
-        <a th:href="@{/select(id=${Deck.id})}" style="text-decoration:none;">
+        <a th:href="@{/memorySelect1(id=${Deck.id})}" style="text-decoration:none;">
           <div th:if="${Deck.getMark() == '♠'}">
             <div th:if="${Deck.getNumber() == 1}">
               &emsp;&nbsp;

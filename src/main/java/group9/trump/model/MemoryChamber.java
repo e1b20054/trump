@@ -3,7 +3,6 @@ package group9.trump.model;
 public class MemoryChamber {
   int id;
   String name;
-  int roomNo;
   boolean oya;
 
   public int getId() {
@@ -20,14 +19,6 @@ public class MemoryChamber {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public int getRoomNo() {
-    return roomNo;
-  }
-
-  public void setRoomNo(int roomNo) {
-    this.roomNo = roomNo;
   }
 
   public boolean getOya() {

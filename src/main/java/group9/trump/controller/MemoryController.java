@@ -2,7 +2,7 @@ package group9.trump.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
-//import java.util.Collections;
+import java.util.Collections;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,6 @@ import group9.trump.service.AsyncMemory;
 public class MemoryController {
 
   int openCnt = 0;
-  int roomNo = 1;
 
   @Autowired
   ChamberMapper CMapper;
@@ -53,13 +52,16 @@ public class MemoryController {
   @GetMapping("/memoryMatch")
   public String memoryMatch(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
-    ArrayList<MemoryChamber> MChambers = MCMapper.selectByRoomNo(roomNo);
+    ArrayList<MemoryChamber> MChambers = MCMapper.selectAll();
     if (MChambers.size() >= 4) {
       return "memorySkip.html";
     }
-    asyncMemory.syncInsertMemoryChamber(loginUser, roomNo);
     MemoryChamber MChamber = MCMapper.selectByName(loginUser);
-    MChambers = MCMapper.selectByRoomNo(roomNo);
+    if (MChamber == null) {
+      asyncMemory.syncInsertMemoryChamber(loginUser);
+      MChamber = MCMapper.selectByName(loginUser);
+    }
+    MChambers = MCMapper.selectAll();
     model.addAttribute("user", loginUser);
     model.addAttribute("chamber", MChamber);
     model.addAttribute("MChambers", MChambers);
@@ -71,7 +73,7 @@ public class MemoryController {
     String loginUser = prin.getName();
     ArrayList<Trump> trump = TMapper.selectAllByNotJoker();
     MDMapper.deleteAll();
-    // Collections.shuffle(trump);
+    Collections.shuffle(trump);
     for (int j = 0; j < trump.size(); j++) {
       MDMapper.insertMemoryDeck(trump.get(j).getNumber(), trump.get(j).getMark());
     }
@@ -80,6 +82,22 @@ public class MemoryController {
     model.addAttribute("Deck", Deck);
     model.addAttribute("user", loginUser);
     return "memoryFight.html";
+  }
+
+  @GetMapping("/memoryFight1")
+  public String memoryFight1(Principal prin, ModelMap model) {
+    String loginUser = prin.getName();
+    ArrayList<Trump> trump = TMapper.selectAllByNotJoker();
+    MDMapper.deleteAll();
+    // Collections.shuffle(trump);
+    for (int j = 0; j < trump.size(); j++) {
+      MDMapper.insertMemoryDeck(trump.get(j).getNumber(), trump.get(j).getMark());
+    }
+    MDMapper.deleteByNumber(0);
+    ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
+    model.addAttribute("Deck", Deck);
+    model.addAttribute("user", loginUser);
+    return "memoryFight1.html";
   }
 
   @GetMapping("/select")
@@ -107,8 +125,33 @@ public class MemoryController {
     return "memoryFight.html";
   }
 
+  @GetMapping("/memorySelect1")
+  public String memorySelect1(@RequestParam int id, Principal prin, ModelMap model) {
+    String loginUser = prin.getName();
+    if (openCnt == 0) {
+      MDMapper.updateByOpenTrueId(id);
+      ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
+      model.addAttribute("Deck", Deck);
+      model.addAttribute("user", loginUser);
+      openCnt++;
+    } else if (openCnt == 1) {
+      MDMapper.updateByOpenTrueId(id);
+      ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
+      model.addAttribute("Deck", Deck);
+      model.addAttribute("user", loginUser);
+      model.addAttribute("openCnt", openCnt);
+      openCnt++;
+    } else {
+      ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
+      model.addAttribute("Deck", Deck);
+      model.addAttribute("user", loginUser);
+      model.addAttribute("openCnt", openCnt);
+    }
+    return "memoryFight1.html";
+  }
+
   @GetMapping("/memoryNext")
-  public String next(Principal prin, ModelMap model) {
+  public String memoryNext(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     ArrayList<MemoryDeck> openTrue = MDMapper.selectByOpenTrue();
     if (openTrue.get(0).getNumber() == openTrue.get(1).getNumber()) {
@@ -132,6 +175,31 @@ public class MemoryController {
     return "memoryFight.html";
   }
 
+  @GetMapping("/memoryNext1")
+  public String memoryNext1(Principal prin, ModelMap model) {
+    String loginUser = prin.getName();
+    ArrayList<MemoryDeck> openTrue = MDMapper.selectByOpenTrue();
+    if (openTrue.get(0).getNumber() == openTrue.get(1).getNumber()) {
+      MDMapper.updateByGetTrueId(openTrue.get(0).getId(), loginUser);
+      MDMapper.updateByGetTrueId(openTrue.get(1).getId(), loginUser);
+    }
+    MDMapper.updateByOpenFalseId(openTrue.get(0).getId());
+    MDMapper.updateByOpenFalseId(openTrue.get(1).getId());
+    ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
+    model.addAttribute("Deck", Deck);
+    model.addAttribute("user", loginUser);
+    openCnt = 0;
+    ArrayList<MemoryDeck> getTrump = MDMapper.selectByGetTrue();
+    if (getTrump.size() == 52) {
+      Chamber chamber = CMapper.selectByName(loginUser);
+      CMapper.updateWin(chamber.getWin() + 1);
+      chamber = CMapper.selectByName(loginUser);
+      model.addAttribute("chamber", chamber);
+      return "memoryEnd.html";
+    }
+    return "memoryFight1.html";
+  }
+
   @GetMapping("/memoryWaitSse")
   public SseEmitter memoryWaitSse() {
     final SseEmitter sseEmitter = new SseEmitter();
@@ -142,7 +210,7 @@ public class MemoryController {
   @GetMapping("/memorySelectSse")
   public SseEmitter memorySelectSse() {
     final SseEmitter sseEmitter = new SseEmitter();
-    // this.asyncKekka.asyncShowkekka(sseEmitter);
+    this.asyncMemory.asyncReloadMemoryMatch(sseEmitter);
     return sseEmitter;
   }
 }

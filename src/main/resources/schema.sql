@@ -96,6 +96,5 @@ CREATE TABLE Field(
 CREATE TABLE MemoryChamber(
   id IDENTITY,
   name VARCHAR NOT NULL,
-  roomNo INT NOT NULL,
   oya boolean NOT NULL
 );
