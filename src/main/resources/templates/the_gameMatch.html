@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>the_gameMatch</title>
+
+</head>
+
+<body>
+  <h1>待機部屋</h1>
+
+  <div th:if="${loginUser}">
+    <h2>ようこそ [[${loginUser}]]</h2>
+    <h3>開始まで少しお待ちください</h3>
+  </div>
+
+  <br />
+
+
+  <br />
+
+  <h3><a href="/the_gameFight">スタート</a></h3>
+</body>
+
+</html>

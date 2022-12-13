@@ -2,6 +2,7 @@ package group9.trump.model;
 
 public class The_Game_Tehuda {
   int id;
+  String name;
   int number;
 
   public int getId() {
@@ -10,6 +11,14 @@ public class The_Game_Tehuda {
 
   public void setId(int id) {
     this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public int getNumber() {

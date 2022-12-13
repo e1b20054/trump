@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 //import java.util.List;
 import java.security.Principal;
-import group9.trump.model.Sgame;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;

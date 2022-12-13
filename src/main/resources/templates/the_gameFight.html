@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>the_gameFight</title>
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/the_gameFight/step1');
+      sse.onmessage = function (event) {
+        console.log("sse.onmessage")
+        console.log(event.data);
+        var field_list = JSON.parse(event.data);//JSONオブジェクトとしてparse
+        var field = "";
+        var ba = field_list[0].ba;
+        for (var i = 0; i < field_list.length; i++) {
+          var number = field_list[i].number;
+          var haku = " ";
+          field = field + number + haku;
+        }
+        console.log(field);
+        if (ba == 1) {
+          var div = document.getElementById("field1");
+          div.innerHTML = field;
+        } else if (ba == 2) {
+          var div = document.getElementById("field2");
+          div.innerHTML = field;
+        } else if (ba == 3) {
+          var div = document.getElementById("field3");
+          div.innerHTML = field;
+        } else if (ba == 4) {
+          var div = document.getElementById("field4");
+          div.innerHTML = field;
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <a href="/logout">ログアウト</a>
+  <h1>The_GAME!</h1>
+
+  <h2>場</h2>
+
+  <h3>1</h3>
+  <div id="field1" th:if="${the_game_field1}">
+    <div th:each="the_game_field1 : ${the_game_field1}" style="display: inline-block; _display: inline;">
+      [[${the_game_field1.number}]]
+    </div>
+  </div>
+  <h3>2</h3>
+  <div id="field2" th:if="${the_game_field2}">
+    <div th:each="the_game_field2 : ${the_game_field2}" style="display: inline-block; _display: inline;">
+      [[${the_game_field2.number}]]
+    </div>
+  </div>
+
+  <h3>3</h3>
+  <div id="field3" th:if="${the_game_field3}">
+    <div th:each="the_game_field3 : ${the_game_field3}" style="display: inline-block; _display: inline;">
+      [[${the_game_field3.number}]]
+    </div>
+  </div>
+
+  <h3>4</h3>
+  <div id="field4" th:if="${the_game_field4}">
+    <div th:each="the_game_field4 : ${the_game_field4}" style="display: inline-block; _display: inline;">
+      [[${the_game_field4.number}]]
+    </div>
+  </div>
+
+  <div th:if="${the_game}">
+    <h2>デッキ</h2>
+    <div th:each="the_game : ${the_game}">
+      <tr>
+        <td>[[${the_game}]]</td>
+      </tr>
+    </div>
+  </div>
+
+  <div th:if="${tehuda}">
+    <h2>手札</h2>
+    <div th:each="tehuda : ${tehuda}" style="color: red; display: inline-block; _display: inline;">
+      [[${tehuda}]]
+    </div>
+  </div>
+
+  <form action="/the_gameFight/shouhi" method="post">
+    <input type="number" name="id" />の
+    <input type="number" name="te" />
+    <input type="submit" value="提出">
+  </form>
+
+  <div th:if="${error}">
+    [[${error}]]
+  </div>
+
+  <div th:if="${end}">
+    <form action="/the_gameFight/end" method="post">
+      <input type="submit" value="end">
+    </form>
+  </div>
+
+  <form action="/the_gameFight/result" method="post">
+    <input type="submit" value="result">
+  </form>
+
+
+</body>
+
+</html>

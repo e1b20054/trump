@@ -1,7 +1,8 @@
 package group9.trump.model;
 
-public class The_Game_Field4 {
+public class The_Game_Field {
   int id;
+  int ba;
   int number;
 
   public int getId() {
@@ -10,6 +11,14 @@ public class The_Game_Field4 {
 
   public void setId(int id) {
     this.id = id;
+  }
+
+  public int getBa() {
+    return ba;
+  }
+
+  public void setBa(int ba) {
+    this.ba = ba;
   }
 
   public int getNumber() {

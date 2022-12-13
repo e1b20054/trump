@@ -9,14 +9,11 @@ import org.apache.ibatis.annotations.Delete;
 
 @Mapper
 public interface The_Game_TehudaMapper {
-  @Select("SELECT * from the_game_tehuda where id = #{id};")
-  The_Game_Tehuda selectById(int id);
+  @Select("SELECT number from the_game_tehuda where name =#{name};")
+  ArrayList<Integer> selectAll(String name);
 
-  @Select("SELECT * from the_game_tehuda;")
-  ArrayList<The_Game_Tehuda> selectAll();
-
-  @Insert("INSERT INTO the_game_tehuda (number) VALUES (#{number});")
-  void insertTehuda(int number);
+  @Insert("INSERT INTO the_game_tehuda (name, number) VALUES (#{name},#{number});")
+  void insertTehuda(String name, int number);
 
   @Delete("DELETE FROM the_game_tehuda WHERE number =#{number}")
   boolean deleteTehuda(int number);
@@ -24,7 +21,10 @@ public interface The_Game_TehudaMapper {
   @Delete("DELETE FROM the_game_tehuda")
   boolean delete();
 
+  @Select("SELECT count(*) from the_game_tehuda where name =#{name};")
+  int selectCount(String name);
+
   @Select("SELECT count(*) from the_game_tehuda;")
-  int selectCount();
+  int selectCountAll();
 
 }
