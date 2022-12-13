@@ -10,13 +10,13 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface MemoryChamberMapper {
 
-  @Select("SELECT * from MemoryChamber where roomNo = #{roomNo};")
-  ArrayList<MemoryChamber> selectByRoomNo(int roomNo);
+  @Select("SELECT * from MemoryChamber")
+  ArrayList<MemoryChamber> selectAll();
 
   @Select("SELECT * from MemoryChamber where name = #{name};")
   MemoryChamber selectByName(String name);
 
-  @Insert("INSERT INTO MemoryChamber (name, roomNo, oya) VALUES (#{name},#{roomNo},#{oya});")
-  void insertMemoryChamber(String name, int roomNo, boolean oya);
+  @Insert("INSERT INTO MemoryChamber (name, oya) VALUES (#{name},#{oya});")
+  void insertMemoryChamber(String name, boolean oya);
 
 }
