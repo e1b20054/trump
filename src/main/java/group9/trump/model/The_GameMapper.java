@@ -10,7 +10,7 @@ public interface The_GameMapper {
   @Select("SELECT * from the_game where id = #{id};")
   The_Game selectById(int id);
 
-  @Select("SELECT * from the_game;")
-  ArrayList<The_Game> selectAll();
+  @Select("SELECT number from the_game;")
+  ArrayList<Integer> selectAll();
 
 }

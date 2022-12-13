@@ -7,75 +7,28 @@
 </head>
 
 <body>
-  <a href="/logout">ログアウト</a>
-  <h1>The_GAME!</h1>
+  <a href="/trump">ゲーム選択へ戻る</a>
 
-  <h2>場</h2>
+  <h1>ザ・ゲーム!</h1>
 
-  <div th:if="${the_game_field1}">
-    <h3>1</h3>
-    <div th:each="the_game_field1 : ${the_game_field1}" style="color: red; display: inline-block; _display: inline;">
-      ([[${the_game_field1.number}]])
+  <div th:if="${chamber}">
+    <h2>ようこそ [[${chamber.name}]]</h2>
+    <div>
+      <h3>あなたの戦歴</h3>
     </div>
+    <div>現在[[${chamber.win}]]勝</div>
   </div>
 
-  <div th:if="${the_game_field2}">
-    <h3>2</h3>
-    <div th:each="the_game_field2 : ${the_game_field2}" style="color: red; display: inline-block; _display: inline;">
-      ([[${the_game_field2.number}]])
-    </div>
+  <br />
+
+  <a href="https://www.youtube.com/watch?v=qsVuTGRPSN0" target="_blank" rel="noopener noreferrer">ある実況者が遊んでいる様子</a>
+
+  <div>
+    <h3>入室</h3>
   </div>
-
-  <div th:if="${the_game_field3}">
-    <h3>3</h3>
-    <div th:each="the_game_field3 : ${the_game_field3}" style="color: red; display: inline-block; _display: inline;">
-      ([[${the_game_field3.number}]])
-    </div>
-  </div>
-
-  <div th:if="${the_game_field4}">
-    <h3>4</h3>
-    <div th:each="the_game_field4 : ${the_game_field4}" style="color: red; display: inline-block; _display: inline;">
-      ([[${the_game_field4.number}]])
-    </div>
-  </div>
-
-  <div th:if="${the_game}">
-    <h2>デッキ</h2>
-    <div th:each="the_game : ${the_game}">
-      <tr>
-        <td>([[${the_game.number}]])</td>
-      </tr>
-    </div>
-  </div>
-
-  <div th:if="${tehuda}">
-    <h2>手札</h2>
-    <div th:each="tehuda : ${tehuda}" style="color: red; display: inline-block; _display: inline;">
-      ([[${tehuda.number}]])
-    </div>
-  </div>
-
-  <form action="/the_game/shouhi" method="post">
-    <input type="number" name="id" />の
-    <input type="number" name="te" />
-    <input type="submit" value="提出">
-  </form>
-
-  <div th:if="${error}">
-    [[${error}]]
-  </div>
-
-  <div th:if="${end}">
-    <form action="/the_game/end" method="post">
-      <input type="submit" value="end">
-    </form>
-  </div>
-
-  <form action="/the_game/result" method="post">
-    <input type="submit" value="result">
-  </form>
-
+  <div><a href="/the_gameMatch">待機部屋へ</a></div>
+  <div>※順番に部屋に割り当てられます.</div>
+  <div>４人がそろう, または初めの入室者が「スタート」を押すとゲームが開始します.</div>
 </body>
 
 </html>
