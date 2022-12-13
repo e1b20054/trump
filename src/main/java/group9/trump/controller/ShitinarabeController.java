@@ -20,6 +20,8 @@ import group9.trump.model.Deck;
 import group9.trump.model.TehudaMapper;
 import group9.trump.model.Shitinarabe;
 import group9.trump.model.ShitinarabeMapper;
+import group9.trump.model.ShitinarabeField;
+import group9.trump.model.ShitinarabeFieldMapper;
 import group9.trump.model.Smatch;
 //import group9.trump.model.SmatchMapper;
 //import group9.trump.model.Tehuda;
@@ -37,6 +39,9 @@ public class ShitinarabeController {
   @Autowired
   ShitinarabeMapper SMapper;
 
+  @Autowired
+  ShitinarabeFieldMapper SFMapper;
+
   // @Autowired
   // SmatchMapper SMMapper;
 
@@ -46,74 +51,84 @@ public class ShitinarabeController {
   @GetMapping("/shitinarabe")
   public String trump(Principal prin, ModelMap model) {
     ArrayList<Trump> trumps = TMapper.selectAll();
-    Collections.shuffle(trumps); // トランプシャッフル
     Shitinarabe tmp = new Shitinarabe();
+    ShitinarabeField Field = new ShitinarabeField();
     Trump card = new Trump();
+
+    for (int i = 0; i < 52; i++) {
+      card = trumps.get(i);
+      Field.setNumber(card.getNumber());
+      Field.setMark(card.getMark());
+      SFMapper.insertShitinarabeField(Field.getNumber(), Field.getMark(), false);
+    }
+
+    Collections.shuffle(trumps); // トランプシャッフル
     for (int i = 1; i < 5; i++) {
       for (int j = 0; j < 13; j++) {
-        card = trumps.get((i - 1) * 12 + j);
+        card = trumps.get((i - 1) * 13 + j);
         tmp.setNumber(card.getNumber());
         tmp.setMark(card.getMark());
-        tmp.setName(i);
+        tmp.setName(1);
         tmp.setState("tehuda");
         SMapper.insertShitinarabe(tmp.getNumber(), tmp.getMark(), tmp.getName(), tmp.getState());
       }
     }
 
+    tmp = SMapper.selectCard("♦", 7);
+    SFMapper.updateField("♦", 7);
+    SMapper.updateTehuda(tmp.getId());
+    tmp = SMapper.selectCard("♠", 7);
+    SFMapper.updateField("♠", 7);
+    SMapper.updateTehuda(tmp.getId());
+    tmp = SMapper.selectCard("♣", 7);
+    SFMapper.updateField("♣", 7);
+    SMapper.updateTehuda(tmp.getId());
+    tmp = SMapper.selectCard("♥", 7);
+    SFMapper.updateField("♥", 7);
+    SMapper.updateTehuda(tmp.getId());
+
     String loginUser = prin.getName();
     int loginId = CMapper.selectIdByName(loginUser);
     ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginId);
+    ArrayList<ShitinarabeField> Fieldlist = SFMapper.selectAll();
+    model.addAttribute("Field", Fieldlist);
     model.addAttribute("tehuda", tehuda);
-    /*
-     * model.addAttribute("tehuda", tehuda);
-     * for (j = i; j < trumps.size(); j++) {
-     * DMapper.insertDeck(trumps.get(j).getNumber(), trumps.get(j).getMark());
-     * }
-     * for (int k = 0; k < tehuda.size(); k++) {
-     * TTMapper.insertTehuda(tehuda.get(k).getNumber(), trumps.get(k).getMark());
-     * }
-     * ArrayList<Deck> trump = DMapper.selectAll();
-     * model.addAttribute("trump", trump);
-     */
     return "shitinarabe.html";
   }
 
-  public String card(@RequestParam String mark, Integer number, Principal prin, ModelMap model) {
-    Boolean flag;
-    Sgame sgame = new Sgame();
+  @GetMapping("/card")
+  public String card(@RequestParam String mark, int number, Principal prin, ModelMap model) {
     Shitinarabe right = new Shitinarabe();
     Shitinarabe left = new Shitinarabe();
+    Shitinarabe tmp = new Shitinarabe();
 
     if (number == 13) {
       right = SMapper.selectCard(mark, number - 12);
     } else {
-      right = SMapper.selectCard(mark, number);
+      right = SMapper.selectCard(mark, number + 1);
     }
     if (number == 1) {
       left = SMapper.selectCard(mark, number + 12);
     } else {
-      right = SMapper.selectCard(mark, number + 12);
+      left = SMapper.selectCard(mark, number - 1);
+    }
+
+    if ("Field".equals(right.getState()) || "Field".equals(left.getState())) {
+      tmp = SMapper.selectCard(mark, number);
+      SFMapper.updateField(mark, number);
+      SMapper.updateTehuda(tmp.getId());
+      model.addAttribute("flag", "true");
+    } else {
+      model.addAttribute("flag", "false");
     }
 
     String loginUser = prin.getName();
     int loginId = CMapper.selectIdByName(loginUser);
     ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginId);
+    ArrayList<ShitinarabeField> Fieldlist = SFMapper.selectAll();
+    model.addAttribute("Field", Fieldlist);
     model.addAttribute("tehuda", tehuda);
     return "shitinarabe.html";
   }
-
-  // @PostMapping("/ /shouhi")
-  // public String trump2(ModelMap model, @RequestParam Integer id, @RequestParam
-  // Integer te) {
-  // TTMapper.deleteTehuda(te);
-  // ArrayList< Deck> = TGDMapper.selectAll();
-  // TGTMapper.insertTehuda( .get(0).getNumber());
-  // TGDMapper.deleteDeck( .get(0).getNumber());
-  // .remove(0);
-  // ArrayList< Tehuda> tehuda = TGTMapper.selectAll();
-  // model.addAttribute(" ", );
-  // model.addAttribute("tehuda", tehuda);
-  // return " .html";
-  // }
 
 }
