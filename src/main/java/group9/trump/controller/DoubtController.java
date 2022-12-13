@@ -41,8 +41,6 @@ public class DoubtController {
   @Autowired
   FieldMapper FMapper;
 
-  int turn = 13;
-
   @GetMapping("/doubt")
   public String doubt(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
@@ -82,6 +80,10 @@ public class DoubtController {
       TTMapper.insertTehuda(Tehuda.get(k + 3).getNumber(), Tehuda.get(k + 3).getMark(), "admin");
     }
 
+    int turn = 13;
+    String nextname = "admin";
+    FMapper.insertField(0, "♠", turn, loginUser, nextname);
+    model.addAttribute("nextname", nextname);
     Tehuda = TTMapper.selectAllOrder();
     model.addAttribute("tehuda", Tehuda);
     ArrayList<Deck> trump = DMapper.selectAll();
@@ -93,6 +95,7 @@ public class DoubtController {
   public String doubtFight(Principal prin, ModelMap model, @RequestParam int selectedcard) {
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
+    int turn = FMapper.selectTurnOne();
     turn++;
     if (turn == 14) {
       turn = 1;
@@ -100,7 +103,24 @@ public class DoubtController {
     Tehuda putcard = TTMapper.selectById(selectedcard);
     TTMapper.deleteTehudaById(selectedcard);
 
-    FMapper.insertField(putcard.getNumber(), putcard.getMark(), turn, loginUser);
+    String nextname = FMapper.selectNextOne();
+
+    if (nextname.equals("user3")) {
+      nextname = "admin";
+    } else if (nextname.equals("admin")) {
+      nextname = "user1";
+    } else if (nextname.equals("user1")) {
+      nextname = "user2";
+    } else if (nextname.equals("user2")) {
+      nextname = "user3";
+    }
+
+    if (FMapper.selectNumberOne() == 0) {
+      FMapper.deleteField();
+    }
+
+    model.addAttribute("nextname", nextname);
+    FMapper.insertField(putcard.getNumber(), putcard.getMark(), turn, loginUser, nextname);
     Field field = FMapper.selectFieldOne();
     model.addAttribute("field", field);
     ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
@@ -142,7 +162,25 @@ public class DoubtController {
         TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
       }
     }
+
+    int turn = FMapper.selectTurnOne();
+    turn++;
+    if (turn == 14) {
+      turn = 1;
+    }
+    String nextname = FMapper.selectUserOne();
+    if (nextname.equals("user3")) {
+      nextname = "admin";
+    } else if (nextname.equals("admin")) {
+      nextname = "user1";
+    } else if (nextname.equals("user1")) {
+      nextname = "user2";
+    } else if (nextname.equals("user2")) {
+      nextname = "user3";
+    }
+
     FMapper.deleteField();
+    FMapper.insertField(0, "♠", turn, loginUser, nextname);
     model.addAttribute("user", user);
     model.addAttribute("result", result);
     model.addAttribute("field", field);

@@ -22,76 +22,342 @@
   <div th:if="${tehuda}">
     <h2>手札</h2>
     <div th:if="${user=='user1'}">
-      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+      <div th:if="${nextname=='user1'}">
+        <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user1'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user1'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+        </form>
+      </div>
+      <div th:if="${nextname!='user1'}">
         <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user1'}"
-          style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
+          style="display: inline-block; _display: inline; color: black;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
           &nbsp;
         </label>
         <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user1'}"
-          style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
+          style="display: inline-block; _display: inline; color: red;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
           &nbsp;
         </label>
-      </form>
+      </div>
     </div>
     <div th:if="${user=='user2'}">
-      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+      <div th:if="${nextname=='user2'}">
+        <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user2'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user2'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+        </form>
+      </div>
+      <div th:if="${nextname!='user2'}">
         <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user2'}"
-          style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
+          style="display: inline-block; _display: inline; color: black;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
           &nbsp;
         </label>
         <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user2'}"
-          style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
+          style="display: inline-block; _display: inline; color: red;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
           &nbsp;
         </label>
-      </form>
+      </div>
     </div>
     <div th:if="${user=='user3'}">
-      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+      <div th:if="${nextname=='user3'}">
+        <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user3'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user3'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+        </form>
+      </div>
+      <div th:if="${nextname!='user3'}">
         <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='user3'}"
-          style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
+          style="display: inline-block; _display: inline; color: black;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
           &nbsp;
         </label>
         <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='user3'}"
-          style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
+          style="display: inline-block; _display: inline; color: red;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
           &nbsp;
         </label>
-      </form>
+      </div>
     </div>
     <div th:if="${user=='admin'}">
-      <form method="post" th:action="@{/doubtFight}" th:object="${card}">
-        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='admin'}"
+      <div th:if="${nextname=='admin'}">
+        <form method="post" th:action="@{/doubtFight}" th:object="${card}">
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♠' || tehuda.mark=='♣') && tehuda.name=='admin'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+          <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='admin'}"
+            style="display: inline-block; _display: inline;">
+            <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
+              [[${tehuda.number}]][[${tehuda.mark}]]
+            </button>
+            &nbsp;
+          </label>
+        </form>
+      </div>
+      <div th:if="${nextname!='admin'}">
+        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♠' && tehuda.name=='admin'}"
           style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: black;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
-          &nbsp;
+          <div th:if="${tehuda.number==1}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s1.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==2}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s2.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==3}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s3.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==4}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s4.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==5}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s5.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==6}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s6.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==7}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s7.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==8}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s8.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==9}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s9.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==10}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s10.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==11}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s11.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==12}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s12.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==13}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/s13.png}" width="60">
+          </div>
         </label>
-        <label th:each="tehuda : ${tehuda}" th:if="${(tehuda.mark=='♥' || tehuda.mark=='♦') && tehuda.name=='admin'}"
+        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♣' && tehuda.name=='admin'}"
           style="display: inline-block; _display: inline;">
-          <button type="submit" name="selectedcard" th:value="${tehuda.id}" style="color: red;">
-            [[${tehuda.number}]][[${tehuda.mark}]]
-          </button>
-          &nbsp;
+          <div th:if="${tehuda.number==1}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c1.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==2}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c2.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==3}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c3.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==4}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c4.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==5}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c5.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==6}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c6.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==7}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c7.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==8}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c8.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==9}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c9.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==10}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c10.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==11}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c11.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==12}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c12.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==13}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/c13.png}" width="60">
+          </div>
         </label>
-      </form>
+        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♥' && tehuda.name=='admin'}"
+          style="display: inline-block; _display: inline;">
+          <div th:if="${tehuda.number==1}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h1.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==2}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h2.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==3}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h3.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==4}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h4.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==5}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h5.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==6}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h6.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==7}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h7.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==8}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h8.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==9}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h9.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==10}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h10.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==11}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h11.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==12}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h12.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==13}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/h13.png}" width="60">
+          </div>
+        </label>
+        <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♦' && tehuda.name=='admin'}"
+          style="display: inline-block; _display: inline;">
+          <div th:if="${tehuda.number==1}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d1.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==2}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d2.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==3}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d3.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==4}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d4.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==5}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d5.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==6}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d6.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==7}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d7.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==8}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d8.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==9}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d9.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==10}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d10.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==11}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d11.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==12}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d12.png}" width="60">
+          </div>
+          <div th:if="${tehuda.number==13}">
+            &emsp;&nbsp;
+            <img th:src="@{/image/d13.png}" width="60">
+          </div>
+        </label>
+      </div>
     </div>
     <p><a href="/doubtCall">ダウト宣言</a></p>
   </div>
