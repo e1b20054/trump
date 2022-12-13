@@ -76,6 +76,13 @@ CREATE TABLE Shitinarabe(
   state VARCHAR
 );
 
+CREATE TABLE ShitinarabeField(
+  id IDENTITY,
+  number INT NOT NULL,
+  mark VARCHAR NOT NULL,
+  Field boolean
+);
+
 CREATE TABLE Smatch(
   id IDENTITY,
   number INT NOT NULL,
