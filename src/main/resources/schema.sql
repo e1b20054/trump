@@ -105,3 +105,9 @@ CREATE TABLE Turn(
   tehuda INT,
   turn INT
 );
+
+CREATE TABLE DoubtResult(
+  id IDENTITY,
+  judge VARCHAR,
+  name VARCHAR
+);
