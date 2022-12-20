@@ -8,9 +8,35 @@
   <script>
     window.onload = function () {
       var sse = new EventSource('/memoryWaitSse');
-      sse.onmessage = function () {
+      sse.onmessage = function (event) {
+        console.log("sse.onmessage")
         console.log(event.data);
-        var match = JSON.parse(event.data);
+        var chambers = JSON.parse(event.data);
+        if (chambers[0].oya == true) {
+          var chamber = "";
+          var div_bgn = "<div>";
+          chamber += div_bgn;
+          var h3 = "<h3>入室メンバ</h3>";
+          chamber += h3;
+          var ul_bgn = "<ul>";
+          chamber += ul_bgn;
+          for (var i = 0; i < chambers.length; i++) {
+            var li = "<li>" + chambers[i].name + "</li>";
+            chamber += li;
+          }
+          var ul_end = "</ul>";
+          chamber += ul_end;
+          var div_end = "</div>";
+          chamber += div_end;
+          console.log(chamber);
+          var member = document.getElementById("member");
+          member.innerHTML = chamber;
+        } else {
+          var html = "<h3><a href=" + "/memoryFight" + ">ゲームスタート</a></h3>";
+          console.log(html);
+          var start = document.getElementById("start");
+          start.innerHTML = html;
+        }
       }
     }
   </script>
@@ -21,12 +47,12 @@
 
   <div th:if="${user}">
     <h2>ようこそ [[${user}]]</h2>
-    <h3>開始まで少しお待ちください</h3>
+    <h3 id="start">開始まで少しお待ちください</h3>
   </div>
 
   <br />
 
-  <div th:if="${MChambers}">
+  <div th:if="${MChambers}" id="member">
     <h3>入室メンバ</h3>
     <ul>
       <li th:each="MChambers : ${MChambers}">[[${MChambers.name}]]</li>

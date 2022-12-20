@@ -127,7 +127,7 @@ public class DoubtController {
     model.addAttribute("tehuda", Tehuda);
     if (Tehuda.size() == 0) {
       Chamber chamber = CMapper.selectByName(loginUser);
-      CMapper.updateWin(chamber.getWin() + 1);
+      //CMapper.updateWin(chamber.getWin() + 1);
       chamber = CMapper.selectByName(loginUser);
       model.addAttribute("chamber", chamber);
       return "doubtEnd.html";

@@ -7,9 +7,14 @@
 </head>
 
 <body>
-  <div th:if="${chamber}">
-    <h1>Congratulation! [[${chamber.name}]]</h1>
-    <h2>現在の[[${chamber.name}]]の勝利数：[[${chamber.win}]]</h2>
+  <div th:if="${winner}">
+    <h1>試合結果</h1>
+    <h2 sec:authorize="hasRole('ROLE_USER')">[[${winner.name}]] の勝ち（[[${winner.get}]]枚獲得）</h2>
+    <div th:if="${Rank}">
+      <div th:each="Rank,stat : ${Rank}">
+        [[${stat.count}]]位：[[${Rank.name}]] （[[${Rank.get}]]枚獲得）</li>
+      </div>
+    </div>
   </div>
   <br />
   <a href="/trump">ゲーム選択へ戻る</a>

@@ -19,7 +19,8 @@ import group9.trump.model.MemoryDeckMapper;
 import group9.trump.model.MemoryDeck;
 import group9.trump.model.MemoryChamberMapper;
 import group9.trump.model.MemoryChamber;
-import group9.trump.service.AsyncMemory;
+import group9.trump.service.AsyncMemoryWait;
+import group9.trump.service.AsyncMemoryFight;
 
 @Controller
 public class MemoryController {
@@ -39,7 +40,10 @@ public class MemoryController {
   MemoryChamberMapper MCMapper;
 
   @Autowired
-  AsyncMemory asyncMemory;
+  AsyncMemoryWait asyncMemoryWait;
+
+  @Autowired
+  AsyncMemoryFight asyncMemoryFight;
 
   @GetMapping("/memory")
   public String memory(Principal prin, ModelMap model) {
@@ -52,13 +56,17 @@ public class MemoryController {
   @GetMapping("/memoryMatch")
   public String memoryMatch(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
+    ArrayList<MemoryDeck> Decks = MDMapper.selectAll();
+    if (Decks.size() != 0 && Decks.get(0).getEndMatch() == true) {
+      MCMapper.deleteAll();
+    }
     ArrayList<MemoryChamber> MChambers = MCMapper.selectAll();
     if (MChambers.size() >= 4) {
       return "memorySkip.html";
     }
     MemoryChamber MChamber = MCMapper.selectByName(loginUser);
     if (MChamber == null) {
-      asyncMemory.syncInsertMemoryChamber(loginUser);
+      asyncMemoryWait.syncInsertMemoryChamber(loginUser);
       MChamber = MCMapper.selectByName(loginUser);
     }
     MChambers = MCMapper.selectAll();
@@ -71,16 +79,25 @@ public class MemoryController {
   @GetMapping("/memoryFight")
   public String memoryFight(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
+    MCMapper.updateByIsActive(true, MCMapper.selectByName(loginUser).getId());
     ArrayList<Trump> trump = TMapper.selectAllByNotJoker();
-    MDMapper.deleteAll();
-    Collections.shuffle(trump);
-    for (int j = 0; j < trump.size(); j++) {
-      MDMapper.insertMemoryDeck(trump.get(j).getNumber(), trump.get(j).getMark());
+    if ((MCMapper.selectByName(loginUser)).getOya() == true) {
+      asyncMemoryWait.syncDeleteMemoryDeck();
+      // Collections.shuffle(trump);
+      for (int j = 0; j < trump.size(); j++) {
+        MDMapper.insertMemoryDeck(trump.get(j).getNumber(), trump.get(j).getMark());
+      }
     }
     MDMapper.deleteByNumber(0);
     ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
     model.addAttribute("Deck", Deck);
     model.addAttribute("user", loginUser);
+    MemoryChamber userChamber = MCMapper.selectByName(loginUser);
+    model.addAttribute("userChamber", userChamber);
+    ArrayList<MemoryChamber> MChambers = MCMapper.selectAll();
+    if (MChambers.size() == 1) {
+      return "memoryFight1.html";
+    }
     return "memoryFight.html";
   }
 
@@ -100,17 +117,25 @@ public class MemoryController {
     return "memoryFight1.html";
   }
 
-  @GetMapping("/select")
-  public String select(@RequestParam int id, Principal prin, ModelMap model) {
+  @GetMapping("/memorySelect")
+  public String memorySelect(@RequestParam int id, Principal prin, ModelMap model) {
     String loginUser = prin.getName();
+    MemoryChamber userChamber = MCMapper.selectByName(loginUser);
+    model.addAttribute("userChamber", userChamber);
+    if (userChamber.getNow() == false) {
+      ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
+      model.addAttribute("Deck", Deck);
+      model.addAttribute("user", loginUser);
+      return "memoryFight.html";
+    }
     if (openCnt == 0) {
-      MDMapper.updateByOpenTrueId(id);
+      asyncMemoryFight.syncUpdateByOpenTrueId(id);
       ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
       model.addAttribute("Deck", Deck);
       model.addAttribute("user", loginUser);
       openCnt++;
     } else if (openCnt == 1) {
-      MDMapper.updateByOpenTrueId(id);
+      asyncMemoryFight.syncUpdateByOpenTrueId(id);
       ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
       model.addAttribute("Deck", Deck);
       model.addAttribute("user", loginUser);
@@ -155,24 +180,57 @@ public class MemoryController {
     String loginUser = prin.getName();
     ArrayList<MemoryDeck> openTrue = MDMapper.selectByOpenTrue();
     if (openTrue.get(0).getNumber() == openTrue.get(1).getNumber()) {
-      MDMapper.updateByGetTrueId(openTrue.get(0).getId(), loginUser);
-      MDMapper.updateByGetTrueId(openTrue.get(1).getId(), loginUser);
+      asyncMemoryFight.syncUpdateByGetTrueId(openTrue.get(0).getId(), openTrue.get(1).getId(), loginUser);
+    } else {
+      int nowId = MCMapper.selectByNowTrueId();
+      int nextId = nowId;
+      ArrayList<MemoryChamber> MChambers = MCMapper.selectAll();
+      if (nowId == MChambers.size()) {
+        nextId = 1;
+      } else {
+        nextId++;
+      }
+      MCMapper.updateByNow(true, nextId);
+      MCMapper.updateByNow(false, nowId);
     }
     MDMapper.updateByOpenFalseId(openTrue.get(0).getId());
     MDMapper.updateByOpenFalseId(openTrue.get(1).getId());
+    asyncMemoryFight.syncUpdateByOpenFalseId(openTrue.get(0).getId(), openTrue.get(1).getId());
     ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
     model.addAttribute("Deck", Deck);
     model.addAttribute("user", loginUser);
+    MemoryChamber userChamber = MCMapper.selectByName(loginUser);
+    model.addAttribute("userChamber", userChamber);
     openCnt = 0;
     ArrayList<MemoryDeck> getTrump = MDMapper.selectByGetTrue();
     if (getTrump.size() == 52) {
-      Chamber chamber = CMapper.selectByName(loginUser);
-      CMapper.updateWin(chamber.getWin() + 1);
-      chamber = CMapper.selectByName(loginUser);
-      model.addAttribute("chamber", chamber);
+      asyncMemoryFight.syncMatchEndMatch(loginUser);
+      ArrayList<MemoryChamber> Rank = MCMapper.selectRank();
+      MemoryChamber winner = MCMapper.selectTop();
+      if (loginUser != "admin" && loginUser.equals(winner.getName())) {
+        Chamber chamber = CMapper.selectByName(loginUser);
+        CMapper.updateWin(chamber.getWin() + 1, loginUser);
+      }
+      model.addAttribute("Rank", Rank);
+      model.addAttribute("winner", winner);
       return "memoryEnd.html";
     }
     return "memoryFight.html";
+  }
+
+  @GetMapping("/memoryEnd")
+  public String memoryEnd(Principal prin, ModelMap model) {
+    String loginUser = prin.getName();
+    asyncMemoryFight.syncMatchEndMatch(loginUser);
+    ArrayList<MemoryChamber> Rank = MCMapper.selectRank();
+    MemoryChamber winner = MCMapper.selectTop();
+    if (loginUser != "admin" && loginUser.equals(winner.getName())) {
+      Chamber chamber = CMapper.selectByName(loginUser);
+      CMapper.updateWin(chamber.getWin() + 1, loginUser);
+    }
+    model.addAttribute("Rank", Rank);
+    model.addAttribute("winner", winner);
+    return "memoryEnd.html";
   }
 
   @GetMapping("/memoryNext1")
@@ -192,10 +250,10 @@ public class MemoryController {
     ArrayList<MemoryDeck> getTrump = MDMapper.selectByGetTrue();
     if (getTrump.size() == 52) {
       Chamber chamber = CMapper.selectByName(loginUser);
-      CMapper.updateWin(chamber.getWin() + 1);
+      CMapper.updateWin(chamber.getWin() + 1, loginUser);
       chamber = CMapper.selectByName(loginUser);
       model.addAttribute("chamber", chamber);
-      return "memoryEnd.html";
+      return "memoryEnd1.html";
     }
     return "memoryFight1.html";
   }
@@ -203,14 +261,14 @@ public class MemoryController {
   @GetMapping("/memoryWaitSse")
   public SseEmitter memoryWaitSse() {
     final SseEmitter sseEmitter = new SseEmitter();
-    // this.asyncKekka.asyncShowkekka(sseEmitter);
+    this.asyncMemoryWait.asyncReloadMemoryMatch(sseEmitter);
     return sseEmitter;
   }
 
-  @GetMapping("/memorySelectSse")
-  public SseEmitter memorySelectSse() {
+  @GetMapping("/memoryFightSse")
+  public SseEmitter memoryFightSse() {
     final SseEmitter sseEmitter = new SseEmitter();
-    this.asyncMemory.asyncReloadMemoryMatch(sseEmitter);
+    this.asyncMemoryFight.asyncMemoryFight(sseEmitter);
     return sseEmitter;
   }
 }
