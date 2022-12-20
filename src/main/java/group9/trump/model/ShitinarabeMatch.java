@@ -1,11 +1,11 @@
 package group9.trump.model;
 
-public class Shitinarabe {
+public class ShitinarabeMatch {
   int id;
   int number;
   String mark;
   String name;
-  String state;
+  String nextname;
 
   public int getId() {
     return id;
@@ -39,12 +39,12 @@ public class Shitinarabe {
     this.name = name;
   }
 
-  public String getState() {
-    return state;
+  public String getNextname() {
+    return nextname;
   }
 
-  public void setState(String state) {
-    this.state = state;
+  public void setNextname(String nextname) {
+    this.nextname = nextname;
   }
 
 }

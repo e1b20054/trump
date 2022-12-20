@@ -4,7 +4,7 @@ public class ShitinarabeField {
   int id;
   int number;
   String mark;
-  Boolean Field;
+  Boolean field;
 
   public int getId() {
     return id;
@@ -31,10 +31,10 @@ public class ShitinarabeField {
   }
 
   public Boolean getField() {
-    return Field;
+    return field;
   }
 
-  public void setField(Boolean Field) {
-    this.Field = Field;
+  public void setField(Boolean field) {
+    this.field = field;
   }
 }

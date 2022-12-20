@@ -61,7 +61,7 @@ CREATE TABLE Shitinarabe(
   id IDENTITY,
   number INT NOT NULL,
   mark VARCHAR NOT NULL,
-  name INT,
+  name VARCHAR,
   state VARCHAR
 );
 
@@ -69,16 +69,16 @@ CREATE TABLE ShitinarabeField(
   id IDENTITY,
   number INT NOT NULL,
   mark VARCHAR NOT NULL,
-  Field boolean
+  field boolean
 );
 
-CREATE TABLE Smatch(
+
+CREATE TABLE Shitinarabematch(
   id IDENTITY,
   number INT NOT NULL,
-  mark VARCHAR NOT NULL,
-  name INT,
-  nextuser INT,
-  isActive boolean
+  mark VARCHAR,
+  name VARCHAR,
+  nextname VARCHAR
 );
 
 CREATE TABLE Field(
