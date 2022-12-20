@@ -3,353 +3,83 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Shitinarabe</title>
+  <title>shitinarabeMatch</title>
+
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/shitinarabeSse');
+      sse.onmessage = function (event) {
+        var SMatch = JSON.parse(event.data);
+        var gameFlag = 0;
+        var cnt = 0;
+
+        if (SMatch.length < 2) {
+          gameFlag = 0;
+        }
+        if (SMatch.length == 2) {
+          gameFlag = 1;
+        }
+        if (SMatch.length > 2) {
+          gameFlag = 2;
+        }
+
+        if (gameFlag == 0) {
+          var chamber = "";
+          for (var i = 0; i < SMatch.length; i++) {
+            chamber = chamber + SMatch[i].name + "<br>";
+          }
+          var tbody = document.getElementById("chamber");
+          tbody.innerHTML = chamber;
+        } else if (gameFlag == 1) {
+          var bgn_tr = "<tr>";
+          var end_tr = "</tr>";
+          var field = "";
+          var start = "<a href='/shitinarabeFight'>手札を確認</a>";
+          for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 13; j++) {
+              field = field + "<a id =" + (13 * i + j) + ">" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+            }
+            field = "</br>" + field + "</br>";
+          }
+          field = field + start;
+          var tbody = document.getElementById("field");
+          tbody.innerHTML = field;
+        } else if (gameFlag == 2) {
+
+        }
+
+      }
+    }
+  </script>
 </head>
 
+<body>
+  <div id="tehuda"></div>
+  <div id="field">
 
-<div th:each="Tehuda,stat:${tehuda}">
-  <tr>
-    <td>[[${Tehuda.mark}]]</td>
-    <td>:[[${Tehuda.number}]]</td>
-    <a th:href="@{/card(mark=${Tehuda.mark},number=${Tehuda.number})}">選択</a>
-  </tr>
-</div>
+    <div th:if="${user}">
+      <h1>待機部屋</h1>
+      <h2>ようこそ [[${user}]]</h2>
+      <h3>開始まで少しお待ちください</h3>
+    </div>
 
-<div th:each="Field:${Field}" style="display: inline-block; _display: inline;">
-  <div th:if="${Field.getField() == false}">
-    &emsp;&nbsp;
-    <a style="text-decoration:none;">
-      <img th:src="@{/image/背面.png}" width="60">
-    </a>
-  </div>
-  <div th:if="${Field.getField() == true}">
-    <div th:if="${Field.getMark() == '♠'}">
-      <div th:if="${Field.getNumber() == 1}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s1.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 2}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s2.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 3}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s3.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 4}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s4.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 5}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s5.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 6}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s6.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 7}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s7.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 8}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s8.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 9}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s9.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 10}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s10.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 11}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s11.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 12}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s12.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 13}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/s13.png}" width="60">
-        </a>
+    <br />
+
+    <div th:if="${SChambers}">
+      <h3>入室メンバ</h3>
+      <div id="chamber">
+        <ul>
+          <li th:each="SChambers : ${SChambers}">[[${SChambers.name}]]</li>
+        </ul>
       </div>
     </div>
-    <div th:if="${Field.getMark() == '♣'}">
-      <div th:if="${Field.getNumber() == 1}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c1.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 2}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c2.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 3}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c3.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 4}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c4.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 5}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c5.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 6}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c6.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 7}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c7.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 8}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c8.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 9}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c9.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 10}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c10.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 11}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c11.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 12}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c12.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 13}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/c13.png}" width="60">
-        </a>
-      </div>
-    </div>
-    <div th:if="${Field.getMark() == '♥'}">
-      <div th:if="${Field.getNumber() == 1}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h1.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 2}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h2.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 3}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h3.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 4}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h4.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 5}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h5.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 6}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h6.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 7}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h7.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 8}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h8.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 9}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h9.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 10}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h10.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 11}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h11.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 12}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h12.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 13}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/h13.png}" width="60">
-        </a>
-      </div>
-    </div>
-    <div th:if="${Field.getMark() == '♦'}">
-      <div th:if="${Field.getNumber() == 1}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d1.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 2}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d2.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 3}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d3.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 4}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d4.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 5}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d5.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 6}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d6.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 7}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d7.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 8}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d8.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 9}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d9.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 10}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d10.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 11}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d11.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 12}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d12.png}" width="60">
-        </a>
-      </div>
-      <div th:if="${Field.getNumber() == 13}">
-        &emsp;&nbsp;
-        <a style="text-decoration:none;">
-          <img th:src="@{/image/d13.png}" width="60">
-        </a>
-      </div>
+
+    <br />
+
+    <div th:if="${chamber}">
+      <div>参加者を待っています</div>
     </div>
   </div>
-</div>
-
-<div th:if="${flag == 'true'}">
-  <a>カードを場に出しました</a>
-</div>
-
-
+</body>
 
 </html>
