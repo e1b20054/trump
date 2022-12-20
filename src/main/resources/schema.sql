@@ -53,7 +53,8 @@ CREATE TABLE MemoryDeck(
   mark VARCHAR NOT NULL,
   open boolean NOT NULL,
   get boolean NOT NULL,
-  getter VARCHAR
+  getter VARCHAR,
+  endMatch boolean
 );
 
 CREATE TABLE Shitinarabe(
@@ -92,5 +93,8 @@ CREATE TABLE Field(
 CREATE TABLE MemoryChamber(
   id IDENTITY,
   name VARCHAR NOT NULL,
-  oya boolean NOT NULL
+  oya boolean NOT NULL,
+  now boolean NOT NULL,
+  isActive boolean NOT NULL,
+  get INT NOT NULL
 );

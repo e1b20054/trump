@@ -22,6 +22,6 @@ public interface ChamberMapper {
   @Select("SELECT id from chamber where name = #{name};")
   int selectIdByName(String name);
 
-  @Update("UPDATE chamber SET win = #{win};")
-  void updateWin(int win);
+  @Update("UPDATE chamber SET win = #{win} where name = #{name};")
+  void updateWin(int win, String name);
 }

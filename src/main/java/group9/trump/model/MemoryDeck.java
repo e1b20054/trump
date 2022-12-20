@@ -6,8 +6,8 @@ public class MemoryDeck {
   String mark;
   boolean open;
   boolean get;
-  /**/
   String getter;
+  boolean endMatch;
 
   public int getId() {
     return id;
@@ -55,5 +55,13 @@ public class MemoryDeck {
 
   public void setGetter(String getter) {
     this.getter = getter;
+  }
+
+  public boolean getEndMatch() {
+    return endMatch;
+  }
+
+  public void setEndMatch(boolean endMatch) {
+    this.endMatch = endMatch;
   }
 }

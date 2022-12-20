@@ -42,4 +42,7 @@ public interface MemoryDeckMapper {
 
   @Delete("DELETE FROM MemoryDeck;")
   void deleteAll();
+
+  @Update("UPDATE MemoryDeck SET endMatch = 'TRUE' WHERE id = 1;")
+  void updateByEndMatch();
 }
