@@ -98,3 +98,10 @@ CREATE TABLE MemoryChamber(
   isActive boolean NOT NULL,
   get INT NOT NULL
 );
+
+CREATE TABLE Turn(
+  id IDENTITY,
+  name VARCHAR NOT NULL,
+  tehuda INT,
+  turn INT
+);

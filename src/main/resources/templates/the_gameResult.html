@@ -15,6 +15,10 @@
     <h2>lose</h2>
   </div>
 
+  <div th:if="${chamber}">
+    <h2>現在の[[${chamber.name}]]の勝利数：[[${chamber.win}]]</h2>
+  </div>
+
   <a href="/trump">ゲーム選択へ戻る</a>
 
 </body>
