@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.transaction.annotation.Transactional;
 
 import group9.trump.model.ChamberMapper;
 import group9.trump.model.Chamber;
@@ -22,6 +24,10 @@ import group9.trump.model.TehudaMapper;
 import group9.trump.model.Tehuda;
 import group9.trump.model.FieldMapper;
 import group9.trump.model.Field;
+import group9.trump.model.DoubtResultMapper;
+import group9.trump.model.DoubtResult;
+import group9.trump.service.AsyncDoubtField;
+import group9.trump.service.AsyncDoubtResult;
 
 @Controller
 public class DoubtController {
@@ -40,6 +46,15 @@ public class DoubtController {
 
   @Autowired
   FieldMapper FMapper;
+
+  @Autowired
+  DoubtResultMapper DRMapper;
+
+  @Autowired
+  AsyncDoubtField asyncDoubtField;
+
+  @Autowired
+  AsyncDoubtResult asyncDoubtResult;
 
   @GetMapping("/doubt")
   public String doubt(Principal prin, ModelMap model) {
@@ -61,6 +76,7 @@ public class DoubtController {
     FMapper.deleteField();
     DMapper.deleteDeck();
     TTMapper.deleteTehuda();
+    DRMapper.deleteResult();
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
     int i = 0;
@@ -82,7 +98,7 @@ public class DoubtController {
 
     int turn = 13;
     String nextname = "admin";
-    FMapper.insertField(0, "♠", turn, loginUser, nextname);
+    asyncDoubtField.syncDoubtField(0, "♠", turn, loginUser, nextname);
     model.addAttribute("nextname", nextname);
     Tehuda = TTMapper.selectAllOrder();
     model.addAttribute("tehuda", Tehuda);
@@ -91,53 +107,91 @@ public class DoubtController {
     return "doubtFight.html";
   }
 
-  @PostMapping("/doubtFight")
-  public String doubtFight(Principal prin, ModelMap model, @RequestParam int selectedcard) {
+  @GetMapping("/doubtFight")
+  public String doubtFight1(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
-    int turn = FMapper.selectTurnOne();
-    turn++;
-    if (turn == 14) {
-      turn = 1;
-    }
-    Tehuda putcard = TTMapper.selectById(selectedcard);
-    TTMapper.deleteTehudaById(selectedcard);
 
+    final Field field = this.asyncDoubtField.syncShowDoubt();
+    model.addAttribute("field", field);
+
+    final DoubtResult result = this.asyncDoubtResult.syncShowResult();
+    model.addAttribute("result", result);
+
+    ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
+    model.addAttribute("tehuda", Tehuda);
+
+    return "doubtFight.html";
+  }
+
+  @PostMapping("/doubtFight")
+  public String doubtFight2(Principal prin, ModelMap model, @RequestParam int selectedcard) {
+    String loginUser = prin.getName();
+    model.addAttribute("user", loginUser);
     String nextname = FMapper.selectNextOne();
 
-    if (nextname.equals("user3")) {
-      nextname = "admin";
-    } else if (nextname.equals("admin")) {
-      nextname = "user1";
-    } else if (nextname.equals("user1")) {
-      nextname = "user2";
-    } else if (nextname.equals("user2")) {
-      nextname = "user3";
-    }
+    if (nextname.equals(loginUser)) {
+      int turn = FMapper.selectTurnOne();
+      turn++;
+      if (turn == 14) {
+        turn = 1;
+      }
+      Tehuda putcard = TTMapper.selectById(selectedcard);
+      TTMapper.deleteTehudaById(selectedcard);
 
-    if (FMapper.selectNumberOne() == 0) {
-      FMapper.deleteField();
+      if (nextname.equals("user3")) {
+        nextname = "admin";
+      } else if (nextname.equals("admin")) {
+        nextname = "user1";
+      } else if (nextname.equals("user1")) {
+        nextname = "user2";
+      } else if (nextname.equals("user2")) {
+        nextname = "user3";
+      }
+      if (FMapper.selectNumberOne() == 0) {
+        FMapper.deleteField();
+      }
+      model.addAttribute("nextname", nextname);
+      asyncDoubtField.syncDoubtField(putcard.getNumber(), putcard.getMark(), turn, loginUser, nextname);
+      final Field field = this.asyncDoubtField.syncShowDoubt();
+      model.addAttribute("field", field);
+      ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
+      model.addAttribute("tehuda", Tehuda);
+      if (TTMapper.selectTehudaCount(loginUser) == 0) {
+        Chamber chamber = CMapper.selectByName(loginUser);
+        CMapper.updateWin(chamber.getWin() + 1, loginUser);
+        chamber = CMapper.selectByName(loginUser);
+        model.addAttribute("chamber", chamber);
+        return "doubtEnd.html";
+      }
+      return "doubtFight.html";
     }
-
-    model.addAttribute("nextname", nextname);
-    FMapper.insertField(putcard.getNumber(), putcard.getMark(), turn, loginUser, nextname);
-    Field field = FMapper.selectFieldOne();
+    final DoubtResult result = this.asyncDoubtResult.syncShowResult();
+    model.addAttribute("result", result);
+    final Field field = this.asyncDoubtField.syncShowDoubt();
     model.addAttribute("field", field);
     ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
     model.addAttribute("tehuda", Tehuda);
-    if (Tehuda.size() == 0) {
-      Chamber chamber = CMapper.selectByName(loginUser);
-      //CMapper.updateWin(chamber.getWin() + 1);
-      chamber = CMapper.selectByName(loginUser);
-      model.addAttribute("chamber", chamber);
-      return "doubtEnd.html";
-    }
     return "doubtFight.html";
+  }
+
+  @GetMapping("/doubtFight/step1")
+  public SseEmitter step1() {
+    final SseEmitter sseEmitter = new SseEmitter();
+    this.asyncDoubtField.asyncShowDoubtField(sseEmitter);
+    return sseEmitter;
+  }
+
+  @GetMapping("/doubtFight/step2")
+  public SseEmitter step2() {
+    final SseEmitter sseEmitter = new SseEmitter();
+    this.asyncDoubtResult.asyncShowDoubtResult(sseEmitter);
+    return sseEmitter;
   }
 
   @GetMapping("/doubtCall")
   public String doubtCall(Principal prin, ModelMap model) {
-    String result = "";
+    String judge = "";
     String user = "";
     int i = 1;
 
@@ -148,40 +202,33 @@ public class DoubtController {
     Field first = FMapper.selectFieldFirst();
     Field insert;
     if (field.getTurn() == field.getNumber()) {
-      result = "成功";
+      judge = "成功";
       user = field.getUser();
       for (i = first.getId(); i <= field.getId(); i++) {
         insert = FMapper.selectById(i);
-        TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
+        if (insert.getNumber() != 0) {
+          TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
+        }
       }
     } else {
-      result = "失敗";
+      judge = "失敗";
       user = loginUser;
       for (i = first.getId(); i <= field.getId(); i++) {
         insert = FMapper.selectById(i);
-        TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
+        if (insert.getNumber() != 0) {
+          TTMapper.insertTehuda(insert.getNumber(), insert.getMark(), user);
+        }
       }
     }
 
     int turn = FMapper.selectTurnOne();
-    turn++;
-    if (turn == 14) {
-      turn = 1;
-    }
-    String nextname = FMapper.selectUserOne();
-    if (nextname.equals("user3")) {
-      nextname = "admin";
-    } else if (nextname.equals("admin")) {
-      nextname = "user1";
-    } else if (nextname.equals("user1")) {
-      nextname = "user2";
-    } else if (nextname.equals("user2")) {
-      nextname = "user3";
-    }
-
+    String nextname = FMapper.selectNextOne();
     FMapper.deleteField();
-    FMapper.insertField(0, "♠", turn, loginUser, nextname);
-    model.addAttribute("user", user);
+    asyncDoubtField.syncDoubtField(0, "♠", turn, loginUser, nextname);
+    field = this.asyncDoubtField.syncShowDoubt();
+    // DRMapper.insertResult(result,user);
+    asyncDoubtResult.syncDoubtResult(judge, user);
+    final DoubtResult result = this.asyncDoubtResult.syncShowResult();
     model.addAttribute("result", result);
     model.addAttribute("field", field);
     ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();

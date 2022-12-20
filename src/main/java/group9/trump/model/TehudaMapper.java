@@ -30,4 +30,7 @@ public interface TehudaMapper {
   @Delete("DELETE FROM tehuda WHERE id =#{id};")
   boolean deleteTehudaById(int id);
 
+  @Select("SELECT COUNT(*) from tehuda where name = #{name};")
+  int selectTehudaCount(String name);
+
 }
