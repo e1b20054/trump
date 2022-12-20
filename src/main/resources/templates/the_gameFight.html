@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <title>the_gameFight</title>
   <script>
-    window.onload = function () {
-      var sse = new EventSource('/the_gameFight/step1');
+    window.addEventListener('load', () => {
+      var sse = new EventSource('/trump/the_gameFight/step1');
       sse.onmessage = function (event) {
         console.log("sse.onmessage")
         console.log(event.data);
@@ -33,13 +33,40 @@
           div.innerHTML = field;
         }
       }
-    }
+    })
+    window.addEventListener('load', () => {
+      var sse = new EventSource('/trump/the_gameFight/step2');
+      sse.onmessage = function (event) {
+        console.log("sse.onmessage")
+        console.log(event.data);
+        var turn_list = JSON.parse(event.data);//JSONオブジェクトとしてparse
+        var youkoso = "";
+        var tehuda = "";
+        for (var j = 0; j < turn_list.length; j++) {
+          if (turn_list[j].turn == 1) {
+            youkoso = "<h2>" + turn_list[j].name + "番です" + "</h2>";
+          }
+          tehuda = tehuda + "<div>" + turn_list[j].name + ":" + turn_list[j].tehuda + "枚" + "</div>"
+        }
+        console.log(youkoso);
+        console.log(tehuda);
+        var div1 = document.getElementById("youkoso");
+        div1.innerHTML = youkoso;
+        var div2 = document.getElementById("tehuda");
+        div2.innerHTML = tehuda;
+      }
+    })
   </script>
 </head>
 
 <body>
-  <a href="/logout">ログアウト</a>
   <h1>The_GAME!</h1>
+
+  <div id="youkoso">
+  </div>
+
+  <a href="/trump/the_gameFight/deck">山札の確認</a>
+  <div th:if="${deck}">山札の枚数は[[${deck}]]枚です</div>
 
   <h2>場</h2>
 
@@ -86,9 +113,9 @@
     </div>
   </div>
 
-  <form action="/the_gameFight/shouhi" method="post">
-    <input type="number" name="id" />の
-    <input type="number" name="te" />
+  <form action="/trump/the_gameFight/shouhi" method="post">
+    場(1～4の選択)<input type="number" name="id" />の <br />
+    手札の選択<input type="number" name="te" />
     <input type="submit" value="提出">
   </form>
 
@@ -97,14 +124,17 @@
   </div>
 
   <div th:if="${end}">
-    <form action="/the_gameFight/end" method="post">
+    <form action="/trump/the_gameFight/end" method="post">
       <input type="submit" value="end">
     </form>
   </div>
 
-  <form action="/the_gameFight/result" method="post">
+  <form action="/trump/the_gameFight/result" method="post">
     <input type="submit" value="result">
   </form>
+
+  <div id="tehuda">
+  </div>
 
 
 </body>

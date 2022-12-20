@@ -12,15 +12,19 @@
 
   <div th:if="${loginUser}">
     <h2>ようこそ [[${loginUser}]]</h2>
-    <h3>開始まで少しお待ちください</h3>
+  </div>
+
+  <br />
+  <a href="/trump/the_gameMatch/di">入室(自分は含まない)</a>
+  <div th:if="${turn}">
+    <ul>
+      <li th:each="turn : ${turn}">[[${turn}]]</li>
+    </ul>
   </div>
 
   <br />
 
-
-  <br />
-
-  <h3><a href="/the_gameFight">スタート</a></h3>
+  <h3><a href="/trump/the_gameFight">スタート</a></h3>
 </body>
 
 </html>
