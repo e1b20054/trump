@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>shitinarabeMatch</title>
+
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/shitinarabeSse');
+      sse.onmessage = function (event) {
+        var SMatch = JSON.parse(event.data);
+        var gameFlag = 0;
+        var cnt = 0;
+        var field = "";
+
+        if (SMatch.length == 5 || SMatch.length == 6) {
+          for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 13; j++) {
+              if ((13 * i + j) == 6) {
+                field = field + "<a>" + "<img src='/image/s7.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+              } else if ((13 * i + j) == 19) {
+                field = field + "<a>" + "<img src='/image/c7.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+              } else if ((13 * i + j) == 32) {
+                field = field + "<a>" + "<img src='/image/h7.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+              } else if ((13 * i + j) == 45) {
+                field = field + "<a>" + "<img src='/image/d7.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+              } else {
+                field = field + "<a>" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+              }
+            }
+            field = "</br>" + field + "</br>";
+          }
+          if (SMatch.length == 5) {
+            var name = "";
+            name = SMatch[SMatch.length - 1].name;
+            if (name == "1" || name == "2" || name == "3") {
+              message = "<div>" + "ほかのユーザーを待っています" + "</div>";
+              var tbody = document.getElementById("message");
+              tbody.innerHTML = message;
+            }
+          }
+          if (SMatch.length == 6) {
+            var name = "";
+            name = SMatch[SMatch.length - 1].nextname;
+            message = "<div>" + name + "の番です" + "</div>";
+            var tbody = document.getElementById("message");
+            tbody.innerHTML = message;
+          }
+
+          var tbody = document.getElementById("field");
+          tbody.innerHTML = field;
+        } else if (SMatch.length > 4) {
+          var list = [];
+          for (var i = 4; i < SMatch.length; i++) {
+            var number = SMatch[i].number;
+            if (SMatch[i].mark == "♣") {
+              number = number + 13;
+            } else if (SMatch[i].mark == "♥") {
+              number = number + 26;
+            } if (SMatch[i].mark == "♦") {
+              number = number + 39;
+            }
+            list.push(number);
+          }
+
+          if (SMatch[SMatch.length - 1].number == -1) {
+            message = "<div>" + "ゲームが終了しました" + "</div>" + "<div>" + "<a href='/shitinarabeEnd'>結果を確認</a>"; + "</div>";
+            var tbody = document.getElementById("message");
+            tbody.innerHTML = message;
+            var tehuda = "";
+            var tbody = document.getElementById("tehuda");
+            tbody.innerHTML = tehuda;
+          } else {
+            for (var i = 1; i < 5; i++) {
+              for (var j = 1; j < 14; j++) {
+                var search = 13 * (i - 1) + j;
+
+                if (i == 1) {
+                  if (search == 7) {
+                    field = field + "<a>" + "<img src='/image/s7.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (list.indexOf(search) == -1) {
+                    field = field + "<a>" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 1) {
+                    field = field + "<a>" + "<img src='/image/s1.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 2) {
+                    field = field + "<a>" + "<img src='/image/s2.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 3) {
+                    field = field + "<a>" + "<img src='/image/s3.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 4) {
+                    field = field + "<a>" + "<img src='/image/s4.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 5) {
+                    field = field + "<a>" + "<img src='/image/s5.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 6) {
+                    field = field + "<a>" + "<img src='/image/s6.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 8) {
+                    field = field + "<a>" + "<img src='/image/s8.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 9) {
+                    field = field + "<a>" + "<img src='/image/s9.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 10) {
+                    field = field + "<a>" + "<img src='/image/s10.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 11) {
+                    field = field + "<a>" + "<img src='/image/s11.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 12) {
+                    field = field + "<a>" + "<img src='/image/s12.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 13) {
+                    field = field + "<a>" + "<img src='/image/s13.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  }
+                }
+                if (i == 2) {
+                  if (search == 20) {
+                    field = field + "<a>" + "<img src='/image/c7.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (list.indexOf(search) == -1) {
+                    field = field + "<a>" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 14) {
+                    field = field + "<a>" + "<img src='/image/c1.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 15) {
+                    field = field + "<a>" + "<img src='/image/c2.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 16) {
+                    field = field + "<a>" + "<img src='/image/c3.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 17) {
+                    field = field + "<a>" + "<img src='/image/c4.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 18) {
+                    field = field + "<a>" + "<img src='/image/c5.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 19) {
+                    field = field + "<a>" + "<img src='/image/c6.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 21) {
+                    field = field + "<a>" + "<img src='/image/c8.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 22) {
+                    field = field + "<a>" + "<img src='/image/c9.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 23) {
+                    field = field + "<a>" + "<img src='/image/c10.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 24) {
+                    field = field + "<a>" + "<img src='/image/c11.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 25) {
+                    field = field + "<a>" + "<img src='/image/c12.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 26) {
+                    field = field + "<a>" + "<img src='/image/c13.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  }
+                }
+                if (i == 3) {
+                  if (search == 33) {
+                    field = field + "<a>" + "<img src='/image/h7.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (list.indexOf(search) == -1) {
+                    field = field + "<a>" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 27) {
+                    field = field + "<a>" + "<img src='/image/h1.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 28) {
+                    field = field + "<a>" + "<img src='/image/h2.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 29) {
+                    field = field + "<a>" + "<img src='/image/h3.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 30) {
+                    field = field + "<a>" + "<img src='/image/h4.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 31) {
+                    field = field + "<a>" + "<img src='/image/h5.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 32) {
+                    field = field + "<a>" + "<img src='/image/h6.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 34) {
+                    field = field + "<a>" + "<img src='/image/h8.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 35) {
+                    field = field + "<a>" + "<img src='/image/h9.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 36) {
+                    field = field + "<a>" + "<img src='/image/h10.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 37) {
+                    field = field + "<a>" + "<img src='/image/h11.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 38) {
+                    field = field + "<a>" + "<img src='/image/h12.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 39) {
+                    field = field + "<a>" + "<img src='/image/h13.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  }
+                }
+                if (i == 4) {
+                  if (search == 46) {
+                    field = field + "<a>" + "<img src='/image/d7.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (list.indexOf(search) == -1) {
+                    field = field + "<a>" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 40) {
+                    field = field + "<a>" + "<img src='/image/d1.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 41) {
+                    field = field + "<a>" + "<img src='/image/d2.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 42) {
+                    field = field + "<a>" + "<img src='/image/d3.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 43) {
+                    field = field + "<a>" + "<img src='/image/d4.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 44) {
+                    field = field + "<a>" + "<img src='/image/d5.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 45) {
+                    field = field + "<a>" + "<img src='/image/d6.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 47) {
+                    field = field + "<a>" + "<img src='/image/d8.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 48) {
+                    field = field + "<a>" + "<img src='/image/d9.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 49) {
+                    field = field + "<a>" + "<img src='/image/d10.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 50) {
+                    field = field + "<a>" + "<img src='/image/d11.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 51) {
+                    field = field + "<a>" + "<img src='/image/d12.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  } else if (search == 52) {
+                    field = field + "<a>" + "<img src='/image/d13.png ' width='60'>" + "&emsp;&nbsp" + "</a>";
+                  }
+                }
+              }
+              field = "</br>" + field + "</br>";
+            }
+            var name = "";
+            name = SMatch[SMatch.length - 1].nextname;
+            message = "<div>" + name + "の番です" + "</div>";
+            var tbody = document.getElementById("message");
+            tbody.innerHTML = message;
+            var tbody = document.getElementById("field");
+            tbody.innerHTML = field;
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div th:if="${user}">
+    <p>あなたは[[${user}]]です</p>
+  </div>
+  <div id="message" th:if="${message}">
+    <a th:href="@{/shitinarabeStart}">ゲームを開始</a>
+  </div>
+
+  <div>
+    <div id="field"></div>
+  </div>
+
+  <div id="tehuda" th:if="${tehuda}">
+    <h3>手札</h3>
+    <form method="post" th:action="@{/shitinarabeFight}">
+      &ensp;
+      <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♠'}" style="display: inline-block; _display: inline;">
+        <button type="submit" name="id" th:value="${tehuda.id}" style="color: black;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
+        </button>
+        &nbsp;
+      </label>
+      <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♣'}" style="display: inline-block; _display: inline;">
+        <button type="submit" name="id" th:value="${tehuda.id}" style="color: black;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
+        </button>
+        &nbsp;
+      </label>
+      &ensp;
+      <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♥'}" style="display: inline-block; _display: inline;">
+        <button type="submit" name="id" th:value="${tehuda.id}" style="color: red;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
+        </button>
+        &nbsp;
+      </label>
+      <label th:each="tehuda : ${tehuda}" th:if="${tehuda.mark=='♦'}" style="display: inline-block; _display: inline;">
+        <button type="submit" name="id" th:value="${tehuda.id}" style="color: red;">
+          [[${tehuda.number}]][[${tehuda.mark}]]
+        </button>
+        &nbsp;
+      </label>
+    </form>
+    <a th:href="@{/skip}">スキップ</a>
+  </div>
+</body>
+
+</html>

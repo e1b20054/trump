@@ -23,6 +23,12 @@ public interface ShitinarabeMapper {
   @Select("SELECT * from shitinarabe where mark = #{mark} and number = #{number};")
   Shitinarabe selectCard(String mark, int number);
 
-  @Update("UPDATE shitinarabe SET state = 'field' where id = #{id};")
-  void updateTehuda(int id);
+  @Select("SELECT mark from shitinarabe where id = #{id};")
+  String selectMarkById(int id);
+
+  @Select("SELECT number from shitinarabe where id = #{id};")
+  int selectNumberById(int id);
+
+  @Update("UPDATE shitinarabe SET state = 'field' where mark = #{mark} and number = #{number};")
+  void updateTehuda(String mark, int number);
 }

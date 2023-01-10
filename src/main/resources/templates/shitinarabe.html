@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>shitinarabeMatch</title>
+  <title>shitinarabe</title>
 
   <script>
     window.onload = function () {
@@ -11,16 +11,12 @@
       sse.onmessage = function (event) {
         var SMatch = JSON.parse(event.data);
         var gameFlag = 0;
-        var cnt = 0;
 
-        if (SMatch.length < 2) {
+        if (SMatch.length < 4) {
           gameFlag = 0;
         }
-        if (SMatch.length == 2) {
+        if (SMatch.length == 4) {
           gameFlag = 1;
-        }
-        if (SMatch.length > 2) {
-          gameFlag = 2;
         }
 
         if (gameFlag == 0) {
@@ -37,24 +33,21 @@
           var start = "<a href='/shitinarabeFight'>手札を確認</a>";
           for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 13; j++) {
-              field = field + "<a id =" + (13 * i + j) + ">" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
+              field = field + "<a>" + "<img src='/image/背面.png' width='60'>" + "&emsp;&nbsp" + "</a>";
             }
             field = "</br>" + field + "</br>";
           }
-          field = field + start;
+          field = start + field;
           var tbody = document.getElementById("field");
           tbody.innerHTML = field;
-        } else if (gameFlag == 2) {
 
         }
-
       }
     }
   </script>
 </head>
 
 <body>
-  <div id="tehuda"></div>
   <div id="field">
 
     <div th:if="${user}">
@@ -79,6 +72,7 @@
     <div th:if="${chamber}">
       <div>参加者を待っています</div>
     </div>
+
   </div>
 </body>
 
