@@ -16,8 +16,8 @@ public interface MemoryDeckMapper {
   @Select("SELECT * from MemoryDeck;")
   ArrayList<MemoryDeck> selectAll();
 
-  @Insert("INSERT INTO MemoryDeck (number,mark,open,get) VALUES (#{number},#{mark},'FALSE','FALSE');")
-  void insertMemoryDeck(int number, String mark);
+  @Insert("INSERT INTO MemoryDeck (id,number,mark,open,get) VALUES (#{id},#{number},#{mark},'FALSE','FALSE');")
+  void insertMemoryDeck(int id, int number, String mark);
 
   @Delete("DELETE FROM MemoryDeck WHERE number =#{number}")
   boolean deleteByNumber(int number);
@@ -44,5 +44,11 @@ public interface MemoryDeckMapper {
   void deleteAll();
 
   @Update("UPDATE MemoryDeck SET endMatch = 'TRUE' WHERE id = 1;")
-  void updateByEndMatch();
+  void updateByEndMatchTrue();
+
+  @Update("UPDATE MemoryDeck SET endMatch = 'FALSE' WHERE id = 1;")
+  void updateByEndMatchFalse();
+
+  @Update("UPDATE MemoryDeck SET nowUser = #{nowUser} WHERE id = 1;")
+  void updateByNowUser(String nowUser);
 }

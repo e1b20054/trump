@@ -1,6 +1,6 @@
 package group9.trump.service;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -11,15 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import group9.trump.model.MemoryDeckMapper;
-import group9.trump.model.MemoryDeck;
+//import group9.trump.model.MemoryDeck;
 import group9.trump.model.MemoryChamberMapper;
-import group9.trump.model.MemoryChamber;
+//import group9.trump.model.MemoryChamber;
 
 @Service
 public class AsyncMemoryFight {
   boolean mddbUpdated = false;
   boolean mcdbUpdated = false;
-
 
   @Autowired
   MemoryDeckMapper MDMapper;
@@ -29,7 +28,7 @@ public class AsyncMemoryFight {
 
   private final Logger logger = LoggerFactory.getLogger(AsyncMemoryFight.class);
 
-  public void syncUpdateByOpenTrueId(int id){
+  public void syncUpdateByOpenTrueId(int id) {
     MDMapper.updateByOpenTrueId(id);
     this.mddbUpdated = true;
   }
@@ -37,19 +36,19 @@ public class AsyncMemoryFight {
   public void syncUpdateByGetTrueId(int id_1, int id_2, String name) {
     MDMapper.updateByGetTrueId(id_1, name);
     MDMapper.updateByGetTrueId(id_2, name);
-    MCMapper.updateByGet((MCMapper.selectByName(name).getGet())+2, name);
+    MCMapper.updateByGet((MCMapper.selectByName(name).getGet()) + 2, name);
     this.mddbUpdated = true;
   }
 
-  public void syncUpdateByOpenFalseId(int id_1, int id_2){
+  public void syncUpdateByOpenFalseId(int id_1, int id_2) {
     MDMapper.updateByOpenFalseId(id_1);
     MDMapper.updateByOpenFalseId(id_2);
     this.mddbUpdated = true;
   }
 
-  public void syncMatchEndMatch(String name){
+  public void syncMatchEndMatch(String name) {
     MCMapper.updateByIsActive(false, MCMapper.selectByName(name).getId());
-    MDMapper.updateByEndMatch();
+    MDMapper.updateByEndMatchTrue();
     this.mcdbUpdated = true;
   }
 
