@@ -43,6 +43,9 @@ public interface TurnMapper {
   @Select("SELECT name from turn where name != #{user};")
   ArrayList<String> selectOther(String user);
 
+  @Select("SELECT name from turn;")
+  ArrayList<String> selectAllUser();
+
   @Delete("DELETE FROM turn;")
   boolean delete();
 }

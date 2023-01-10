@@ -5,6 +5,35 @@
   <meta charset="utf-8">
   <title>the_gameMatch</title>
 
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/trump/the_gameFight/step3');
+      sse.onmessage = function (event) {
+        console.log("sse.onmessage")
+        console.log(event.data);
+        var chamber_list = JSON.parse(event.data);
+        var chamber = "";
+        var div_bgn = "<div>";
+        chamber += div_bgn;
+        var h3 = "<h3>入室メンバ</h3>";
+        chamber += h3;
+        var ul_bgn = "<ul>";
+        chamber += ul_bgn;
+        for (var i = 0; i < chamber_list.length; i++) {
+          var li = "<li>" + chamber_list[i] + "</li>";
+          chamber += li;
+        }
+        var ul_end = "</ul>";
+        chamber += ul_end;
+        var div_end = "</div>";
+        chamber += div_end;
+        console.log(chamber);
+        var user = document.getElementById("user");
+        user.innerHTML = chamber;
+      }
+    }
+  </script>
+
 </head>
 
 <body>
@@ -15,12 +44,15 @@
   </div>
 
   <br />
-  <a href="/trump/the_gameMatch/di">入室(自分は含まない)</a>
+  <a href="/trump/the_gameMatch/di">入室メンバの確認</a>
   <div th:if="${turn}">
+    <h3>入室メンバ</h3>
     <ul>
       <li th:each="turn : ${turn}">[[${turn}]]</li>
     </ul>
   </div>
+
+  <div id="user"></div>
 
   <br />
 

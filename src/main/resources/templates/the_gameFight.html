@@ -15,20 +15,23 @@
         var ba = field_list[0].ba;
         for (var i = 0; i < field_list.length; i++) {
           var number = field_list[i].number;
-          var haku = " ";
-          field = field + number + haku;
+          field = field + number + ",";
         }
         console.log(field);
         if (ba == 1) {
+          field = "↑" + field;
           var div = document.getElementById("field1");
           div.innerHTML = field;
         } else if (ba == 2) {
+          field = "↑" + field;
           var div = document.getElementById("field2");
           div.innerHTML = field;
         } else if (ba == 3) {
+          field = "↓" + field;
           var div = document.getElementById("field3");
           div.innerHTML = field;
         } else if (ba == 4) {
+          field = "↓" + field;
           var div = document.getElementById("field4");
           div.innerHTML = field;
         }
@@ -71,29 +74,29 @@
   <h2>場</h2>
 
   <h3>1</h3>
-  <div id="field1" th:if="${the_game_field1}">
+  <div id="field1" th:if="${the_game_field1}">↑
     <div th:each="the_game_field1 : ${the_game_field1}" style="display: inline-block; _display: inline;">
-      [[${the_game_field1.number}]]
+      [[${the_game_field1.number}]],
     </div>
   </div>
   <h3>2</h3>
-  <div id="field2" th:if="${the_game_field2}">
+  <div id="field2" th:if="${the_game_field2}">↑
     <div th:each="the_game_field2 : ${the_game_field2}" style="display: inline-block; _display: inline;">
-      [[${the_game_field2.number}]]
+      [[${the_game_field2.number}]],
     </div>
   </div>
 
   <h3>3</h3>
-  <div id="field3" th:if="${the_game_field3}">
+  <div id="field3" th:if="${the_game_field3}">↓
     <div th:each="the_game_field3 : ${the_game_field3}" style="display: inline-block; _display: inline;">
-      [[${the_game_field3.number}]]
+      [[${the_game_field3.number}]],
     </div>
   </div>
 
   <h3>4</h3>
-  <div id="field4" th:if="${the_game_field4}">
+  <div id="field4" th:if="${the_game_field4}">↓
     <div th:each="the_game_field4 : ${the_game_field4}" style="display: inline-block; _display: inline;">
-      [[${the_game_field4.number}]]
+      [[${the_game_field4.number}]],
     </div>
   </div>
 
@@ -109,15 +112,17 @@
   <div th:if="${tehuda}">
     <h2>手札</h2>
     <div th:each="tehuda : ${tehuda}" style="color: red; display: inline-block; _display: inline;">
-      [[${tehuda}]]
+      [[${tehuda}]],
     </div>
   </div>
 
   <form action="/trump/the_gameFight/shouhi" method="post">
-    場(1～4の選択)<input type="number" name="id" />の <br />
-    手札の選択<input type="number" name="te" />
+    場(1～4の選択)<input type="number" name="id" /> <br />
+    手札の選択(赤い数字を選択)<input type="number" name="te" />
     <input type="submit" value="提出">
   </form>
+  <div>場1～2は昇順、3～4は降順に並べる(ちょうど10は例外)</div>
+  <div>テキストボックスに2つの数字を入れた後提出ボタンを押す</div>
 
   <div th:if="${error}">
     [[${error}]]
@@ -132,6 +137,12 @@
   <form action="/trump/the_gameFight/result" method="post">
     <input type="submit" value="result">
   </form>
+
+  <tbody sec:authorize="hasRole('ROLE_ADMIN')">
+    <form action="/trump/the_gameFight/win" method="post">
+      <input type="submit" value="山札を0にする">
+    </form>
+  </tbody>
 
   <div id="tehuda">
   </div>

@@ -7,12 +7,20 @@
 </head>
 
 <body>
+  <div th:if="${d}">
+    山札の枚数:[[${d}]]枚
+  </div>
+
+  <div th:if="${t}">
+    全員の手札の枚数[[${t}]]枚
+  </div>
+
   <div th:if="${win}">
-    <h2>win</h2>
+    <h2>10枚より少ないので全員勝ち</h2>
   </div>
 
   <div th:if="${lose}">
-    <h2>lose</h2>
+    <h2>10枚以上なので全員負け</h2>
   </div>
 
   <div th:if="${chamber}">

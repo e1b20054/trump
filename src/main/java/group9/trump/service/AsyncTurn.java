@@ -16,11 +16,11 @@ import group9.trump.model.The_Game_Tehuda;
 import group9.trump.model.TurnMapper;
 import group9.trump.model.Turn;
 
-
 @Service
 public class AsyncTurn {
 
   boolean mada = false;
+  boolean user = false;
 
   private final Logger logger = LoggerFactory.getLogger(AsyncTurn.class);
 
@@ -47,14 +47,14 @@ public class AsyncTurn {
     int id = TurnMapper.userid(loguinUser) + 1;
     TurnMapper.update0(loguinUser, TGTMapper.selectCount(loguinUser));
     ArrayList<Integer> idList = TurnMapper.userHantei();
-    for(int i=0;i<idList.size();i++){
-      if(id==idList.get(i)){
+    for (int i = 0; i < idList.size(); i++) {
+      if (id == idList.get(i)) {
         user = TurnMapper.user(id);
         TurnMapper.update1(user, TGTMapper.selectCount(user));
-      } else if(i==(idList.size()-1)){
-      id = TurnMapper.selectTop();
-      user = TurnMapper.user(id);
-      TurnMapper.update1(user, TGTMapper.selectCount(user));
+      } else if (i == (idList.size() - 1)) {
+        id = TurnMapper.selectTop();
+        user = TurnMapper.user(id);
+        TurnMapper.update1(user, TGTMapper.selectCount(user));
       }
     }
   }
@@ -63,27 +63,57 @@ public class AsyncTurn {
     return TurnMapper.select();
   }
 
+  @Transactional
+  public ArrayList<String> syncUser() {
+    ArrayList<String> turn = TurnMapper.selectAllUser();
+    return turn;
+  }
+
+  @Transactional
+  public void syncturnUser(String loginUser) {
+    TurnMapper.insert(loginUser, TGTMapper.selectCount(loginUser));
+    this.user = true;
+  }
+
   @Async
   public void asyncShowTurn(SseEmitter emitter) {
     try {
-      while (true) {// 無限ループ
-        // DBが更新されていなければ0.5s休み
+      while (true) {
         if (false == mada) {
           TimeUnit.MILLISECONDS.sleep(500);
           continue;
         }
-        // DBが更新されていれば更新後のフルーツリストを取得してsendし，1s休み，dbUpdatedをfalseにする
         ArrayList<Turn> turn = this.syncShowTurn();
         emitter.send(turn);
         TimeUnit.MILLISECONDS.sleep(1000);
       }
     } catch (Exception e) {
-      // 例外の名前とメッセージだけ表示する
       logger.warn("Exception:" + e.getClass().getName() + ":" + e.getMessage());
     } finally {
       emitter.complete();
     }
     System.out.println("asyncShowTurn complete");
+  }
+
+  @Async
+  public void asyncShowUser(SseEmitter emitter) {
+    try {
+      while (true) {
+        if (false == user) {
+          TimeUnit.MILLISECONDS.sleep(500);
+          continue;
+        }
+        ArrayList<String> turn = this.syncUser();
+        emitter.send(turn);
+        TimeUnit.MILLISECONDS.sleep(1000);
+        user = false;
+      }
+    } catch (Exception e) {
+      logger.warn("Exception:" + e.getClass().getName() + ":" + e.getMessage());
+    } finally {
+      emitter.complete();
+    }
+    System.out.println("asyncShowUser complete");
   }
 
 }
