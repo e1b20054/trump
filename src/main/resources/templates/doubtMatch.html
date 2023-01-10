@@ -31,6 +31,11 @@
           console.log(chamber);
           var member = document.getElementById("member");
           member.innerHTML = chamber;
+        } else {
+          var html = "<h3><a href=" + "/doubtFight" + ">ゲームスタート</a></h3>";
+          console.log(html);
+          var start = document.getElementById("start");
+          start.innerHTML = html;
         }
       }
     }
@@ -58,12 +63,6 @@
     </div>
     <div>あなたは最初の入室者です. </div>
     <div>4人が集まり, 準備ができたら「スタート」を押してください. </div>
-  </div>
-  <div th:if="${chamber.getOya() == false}">
-    <div>
-      <h3><a href="/doubtFight">ゲームスタート</a></h3>
-    </div>
-    <div>最初の入室者がスタートしてから, ゲームスタートを押してください. (先に入ってしまっても, スタートされれば手札が配られます.)</div>
   </div>
 
   <h3>ルール説明</h3>

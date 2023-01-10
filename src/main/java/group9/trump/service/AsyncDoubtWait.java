@@ -19,6 +19,7 @@ import group9.trump.model.Chamber;
 @Service
 public class AsyncDoubtWait {
   boolean dbUpdated = false;
+  boolean dddbUpdated = false;
 
   private final Logger logger = LoggerFactory.getLogger(AsyncDoubtWait.class);
 
@@ -28,7 +29,6 @@ public class AsyncDoubtWait {
   @Autowired
   ChamberMapper CMapper;
 
-  @Transactional
   public void syncInsertDoubtChamber(String name) {
     ArrayList<DoubtChamber> DChamber = DCMapper.selectAll();
     if (DChamber.size() == 0) {
@@ -39,13 +39,18 @@ public class AsyncDoubtWait {
     }
   }
 
+  public void syncUpdateOyaFalse() {
+    DCMapper.updateByOya(false, (DCMapper.selectByOyaTrueId()));
+    this.dddbUpdated = true;
+  }
+
   @Async
   public void asyncReloadDoubtMatch(SseEmitter emitter) {
     logger.info("start connection");
     dbUpdated = true;
     try {
       while (true) {
-        if (false == dbUpdated) {
+        if (false == dbUpdated && false == dddbUpdated) {
           TimeUnit.MILLISECONDS.sleep(500);
           continue;
         }
