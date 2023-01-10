@@ -8,6 +8,7 @@ public class MemoryDeck {
   boolean get;
   String getter;
   boolean endMatch;
+  String nowUser;
 
   public int getId() {
     return id;
@@ -63,5 +64,13 @@ public class MemoryDeck {
 
   public void setEndMatch(boolean endMatch) {
     this.endMatch = endMatch;
+  }
+
+  public String getNowUser() {
+    return nowUser;
+  }
+
+  public void setNowUser(String nowUser) {
+    this.nowUser = nowUser;
   }
 }

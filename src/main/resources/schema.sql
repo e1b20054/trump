@@ -48,13 +48,14 @@ CREATE TABLE Tehuda(
 );
 
 CREATE TABLE MemoryDeck(
-  id IDENTITY,
+  id INT NOT NULL,
   number INT NOT NULL,
   mark VARCHAR NOT NULL,
   open boolean NOT NULL,
   get boolean NOT NULL,
   getter VARCHAR,
-  endMatch boolean
+  endMatch boolean,
+  nowUser VARCHAR
 );
 
 CREATE TABLE Shitinarabe(
@@ -91,7 +92,7 @@ CREATE TABLE Field(
 );
 
 CREATE TABLE MemoryChamber(
-  id IDENTITY,
+  id INT NOT NULL,
   name VARCHAR NOT NULL,
   oya boolean NOT NULL,
   now boolean NOT NULL,

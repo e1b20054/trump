@@ -4,6 +4,94 @@
 <head>
   <meta charset="utf-8">
   <title>memory</title>
+  <script th:inline="javascript">
+    window.onload = function () {
+      var sse = new EventSource('/memoryFightSse');
+      sse.onmessage = function (event) {
+        console.log("sse.onmessage")
+        console.log(event.data);
+        var decks = JSON.parse(event.data);
+        if (decks[0].endMatch != true) {
+          var name = /*[[${userChamber.getName()}]]*/ "";
+          var reload = "";
+          var div_1_bgn = "<div style='display: inline - block; _display: inline;'>";
+          reload = reload + div_1_bgn;
+          var blank = "&emsp;&emsp;";
+          var div_end = "</div>";
+          if (name != "admin") {
+            for (var i = 0; i < decks.length; i++) {
+              if (decks[i].open == false && decks[i].get == false) {
+                var img_back = "<a href='/memorySelect?id=" + decks[i].id + "' style='text-decoration:none;'><img src='/image/背面.png' width='60' height='85' loading='lazy'></a>";
+                reload = reload + blank + img_back;//
+              } else if (decks[i].open == true) {
+                if (decks[i].mark == "♠") {
+                  var img_front = "<img src='/image/s" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♣") {
+                  var img_front = "<img src='/image/c" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♥") {
+                  var img_front = "<img src='/image/h" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♦") {
+                  var img_front = "<img src='/image/d" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                }
+                reload = reload + blank + img_front;//
+              } else if (decks[i].get == true) {
+                var img_get = "<img src='/image/get.png' width='60' height='85' loading='lazy'>";
+                reload = reload + blank + img_get;
+              }
+              if (i % 13 == 12 && i != 1) {
+                reload += "<div/>"
+              }
+            }
+          } else if (name == "admin") {
+            for (var i = 0; i < decks.length; i++) {
+              if (decks[i].open == false && decks[i].get == false) {
+                var a_bgn = "<a href='/memorySelect?id=" + decks[i].id + "' style='text-decoration:none;'>";
+                var a_end = "</a>";
+                if (decks[i].mark == "♠") {
+                  var img_back = "<img src='/image/s" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♣") {
+                  var img_back = "<img src='/image/c" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♥") {
+                  var img_back = "<img src='/image/h" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♦") {
+                  var img_back = "<img src='/image/d" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                }
+                reload = reload + blank + a_bgn + img_back + a_end;
+              } else if (decks[i].open == true) {
+                if (decks[i].mark == "♠") {
+                  var img_front = "<img src='/image/s" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♣") {
+                  var img_front = "<img src='/image/c" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♥") {
+                  var img_front = "<img src='/image/h" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                } else if (decks[i].mark == "♦") {
+                  var img_front = "<img src='/image/d" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
+                }
+                reload = reload + blank + img_front;
+              } else if (decks[i].get == true) {
+                var img_get = "<img src='/image/get.png' width='60' height='85' loading='lazy'>";
+                reload = reload + blank + img_get;
+              }
+              if (i % 13 == 12 && i != 1) {
+                reload += "<div/>"
+              }
+            }
+          }
+          reload += div_end;
+          console.log(reload);
+          document.getElementById("reload").innerHTML = reload;
+
+          var userHtml = "<div>" + decks[0].nowUser + " の番です</div>";
+          console.log(userHtml);
+          document.getElementById("nowUser").innerHTML = userHtml;
+        } else {
+          var endMatch = "<h2><a href='/memoryEnd'>結果発表</a></h2>";
+          console.log(endMatch);
+          document.getElementById("endMatch").innerHTML = endMatch;
+        }
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -15,6 +103,11 @@
       <div th:if="${openCnt}" style="display: inline-block; _display: inline;">
         <div th:if="${userChamber.getNow() == true}">
           &emsp;&emsp;&emsp;<a href="/memoryNext">次へ</a>
+        </div>
+      </div>
+      <div th:if="${nowUser}">
+        <div id="nowUser">
+          [[${nowUser.getName()}]] の番です
         </div>
       </div>
     </h2>
@@ -475,91 +568,6 @@
       </div>
     </div>
   </div>
-
-  <script th:inline="javascript">
-    window.onload = function () {
-      var sse = new EventSource('/memoryFightSse');
-      sse.onmessage = function (event) {
-        console.log("sse.onmessage")
-        console.log(event.data);
-        var decks = JSON.parse(event.data);
-        if (decks[0].endMatch != true) {
-          var name = /*[[${userChamber.getName()}]]*/ "";
-          var reload = "";
-          var div_1_bgn = "<div style='display: inline - block; _display: inline;'>";
-          reload = reload + div_1_bgn;
-          var blank = "&emsp;&emsp;";
-          var div_end = "</div>";
-          if (name != "admin") {
-            for (var i = 0; i < decks.length; i++) {
-              if (decks[i].open == false && decks[i].get == false) {
-                var img_back = "<a href='/memorySelect?id=" + decks[i].id + "' style='text-decoration:none;'><img src='/image/背面.png' width='60' height='85' loading='lazy'></a>";
-                reload = reload + blank + img_back;//
-              } else if (decks[i].open == true) {
-                if (decks[i].mark == "♠") {
-                  var img_front = "<img src='/image/s" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♣") {
-                  var img_front = "<img src='/image/c" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♥") {
-                  var img_front = "<img src='/image/h" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♦") {
-                  var img_front = "<img src='/image/d" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                }
-                reload = reload + blank + img_front;//
-              } else if (decks[i].get == true) {
-                var img_get = "<img src='/image/get.png' width='60' height='85' loading='lazy'>";
-                reload = reload + blank + img_get;
-              }
-              if (i % 13 == 12 && i != 1) {
-                reload += "<div/>"
-              }
-            }
-          } else if (name == "admin") {
-            for (var i = 0; i < decks.length; i++) {
-              if (decks[i].open == false && decks[i].get == false) {
-                var a_bgn = "<a href='/memorySelect?id=" + decks[i].id + "' style='text-decoration:none;'>";
-                var a_end = "</a>";
-                if (decks[i].mark == "♠") {
-                  var img_back = "<img src='/image/s" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♣") {
-                  var img_back = "<img src='/image/c" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♥") {
-                  var img_back = "<img src='/image/h" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♦") {
-                  var img_back = "<img src='/image/d" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                }
-                reload = reload + blank + a_bgn + img_back + a_end;
-              } else if (decks[i].open == true) {
-                if (decks[i].mark == "♠") {
-                  var img_front = "<img src='/image/s" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♣") {
-                  var img_front = "<img src='/image/c" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♥") {
-                  var img_front = "<img src='/image/h" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                } else if (decks[i].mark == "♦") {
-                  var img_front = "<img src='/image/d" + decks[i].number + ".png' width='60' height='85' loading='lazy'>";
-                }
-                reload = reload + blank + img_front;
-              } else if (decks[i].get == true) {
-                var img_get = "<img src='/image/get.png' width='60' height='85' loading='lazy'>";
-                reload = reload + blank + img_get;
-              }
-              if (i % 13 == 12 && i != 1) {
-                reload += "<div/>"
-              }
-            }
-          }
-          reload += div_end;
-          console.log(reload);
-          document.getElementById("reload").innerHTML = reload;
-        } else {
-          var endMatch = "<h2><a href='/memoryEnd'>結果発表</a></h2>";
-          console.log(endMatch);
-          document.getElementById("endMatch").innerHTML = endMatch;
-        }
-      }
-    }
-  </script>
 </body>
 
 </html>

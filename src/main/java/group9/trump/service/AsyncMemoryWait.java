@@ -13,12 +13,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import group9.trump.model.MemoryChamberMapper;
 import group9.trump.model.MemoryChamber;
 import group9.trump.model.MemoryDeckMapper;
-import group9.trump.model.MemoryDeck;
+//import group9.trump.model.MemoryDeck;
 
 @Service
 public class AsyncMemoryWait {
   boolean mcdbUpdated = false;
   boolean mddbUpdated = false;
+  int id = 1;
 
   @Autowired
   MemoryChamberMapper MCMapper;
@@ -31,14 +32,17 @@ public class AsyncMemoryWait {
   public void syncInsertMemoryChamber(String name) {
     ArrayList<MemoryChamber> MChamber = MCMapper.selectAll();
     if (MChamber.size() == 0) {
-      MCMapper.insertMemoryChamber(name, true, true, false, 0);
+      id = 1;
+      MCMapper.insertMemoryChamber(id, name, true, true, false, 0);
+      id++;
     } else {
-      MCMapper.insertMemoryChamber(name, false, false, false, 0);
+      MCMapper.insertMemoryChamber(id, name, false, false, false, 0);
+      id++;
     }
     this.mcdbUpdated = true;
   }
 
-  public void syncDeleteMemoryDeck(){
+  public void syncDeleteMemoryDeck() {
     MDMapper.deleteAll();
 
     MCMapper.updateByOya(false, (MCMapper.selectByOyaTrueId()));
@@ -67,28 +71,5 @@ public class AsyncMemoryWait {
       emitter.complete();
     }
     System.out.println("asyncReloadMemoryMatch complete");
-  }
-
-  @Async
-  public void asyncMemoryFight(SseEmitter emitter) {
-    logger.info("start connection");
-    mddbUpdated = true;
-    try {
-      while (true) {
-        if (false == mddbUpdated) {
-          TimeUnit.MILLISECONDS.sleep(500);
-          continue;
-        }
-        ArrayList<MemoryDeck> Deck = MDMapper.selectAll();
-        emitter.send(MDMapper);
-        TimeUnit.MILLISECONDS.sleep(1000);
-        mddbUpdated = false;
-      }
-    } catch (Exception e) {
-      logger.warn("Exception:" + e.getClass().getName() + ":" + e.getMessage());
-    } finally {
-      emitter.complete();
-    }
-    System.out.println("asyncMemoryFight complete");
   }
 }

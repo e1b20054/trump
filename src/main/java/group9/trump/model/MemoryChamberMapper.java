@@ -17,8 +17,8 @@ public interface MemoryChamberMapper {
   @Select("SELECT * from MemoryChamber where name = #{name};")
   MemoryChamber selectByName(String name);
 
-  @Insert("INSERT INTO MemoryChamber (name, oya, now, isActive, get) VALUES (#{name}, #{oya}, #{now}, #{isActive}, #{get});")
-  void insertMemoryChamber(String name, boolean oya, boolean now, boolean isActive, int get);
+  @Insert("INSERT INTO MemoryChamber (id, name, oya, now, isActive, get) VALUES (#{id}, #{name}, #{oya}, #{now}, #{isActive}, #{get});")
+  void insertMemoryChamber(int id, String name, boolean oya, boolean now, boolean isActive, int get);
 
   @Update("UPDATE MemoryChamber SET oya = #{bool} WHERE id = #{id};")
   void updateByOya(boolean bool, int id);
@@ -31,6 +31,9 @@ public interface MemoryChamberMapper {
 
   @Select("SELECT id from MemoryChamber where now = true")
   int selectByNowTrueId();
+
+  @Select("SELECT * from MemoryChamber where now = true")
+  MemoryChamber selectByNowTrue();
 
   @Update("UPDATE MemoryChamber SET isActive = #{bool} WHERE id = #{id};")
   void updateByIsActive(boolean bool, int id);
