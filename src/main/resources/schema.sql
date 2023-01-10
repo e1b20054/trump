@@ -88,7 +88,8 @@ CREATE TABLE Field(
   mark VARCHAR,
   turn INT,
   name VARCHAR,
-  nextname VARCHAR
+  nextname VARCHAR,
+  gameturn INT
 );
 
 CREATE TABLE MemoryChamber(
@@ -110,5 +111,12 @@ CREATE TABLE Turn(
 CREATE TABLE DoubtResult(
   id IDENTITY,
   judge VARCHAR,
-  name VARCHAR
+  name VARCHAR,
+  gameturn INT
+);
+
+CREATE TABLE DoubtChamber(
+  id IDENTITY,
+  name VARCHAR NOT NULL,
+  oya boolean NOT NULL
 );

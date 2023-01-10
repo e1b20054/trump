@@ -20,37 +20,12 @@
   </tbody>
   <tbody sec:authorize="hasRole('ROLE_ADMIN')">
     <ol>
-      <li><a href="/doubt">ダウト(ホスト)</a></li>
+      <li><a href="/doubtFight">ダウト(ゲームを見る)</a></li>
       <li><a href="/memory">神経衰弱</a></li>
       <li><a href="/trump/the_game">ザ・ゲーム(ホスト)</a></li>
       <li><a href="/shitinarabe">七並べ(4人)</a></li>
     </ol>
   </tbody>
-
-  働きは変わらない。お試し
-
-  <div th:if="${trump}">
-    <h2>Trump</h2>
-    <div th:each="trump : ${trump}">
-      <tr>
-        <td>id:[[${trump.id}]]</td>
-        <td>num:[[${trump.number}]]</td>
-        <td>mark:[[${trump.mark}]]</td>
-      </tr>
-    </div>
-  </div>
-
-  <div th:if="${chamber}">
-    <h2>Chamber</h2>
-    <div th:each="chamber : ${chamber}">
-      <tr>
-        <td>id:[[${chamber.id}]]</td>
-        <td>name:[[${chamber.name}]]</td>
-        <td>win:[[${chamber.win}]]</td>
-      </tr>
-    </div>
-  </div>
-
 </body>
 
 </html>

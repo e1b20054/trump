@@ -4,6 +4,7 @@ public class DoubtResult {
   int id;
   public String judge;
   public String name;
+  public int gameturn;
 
   public int getId() {
     return id;
@@ -27,6 +28,14 @@ public class DoubtResult {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public int getGameturn() {
+    return gameturn;
+  }
+
+  public void setGameturn(int gameturn) {
+    this.gameturn = gameturn;
   }
 
 }

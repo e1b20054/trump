@@ -33,4 +33,7 @@ public interface TehudaMapper {
   @Select("SELECT COUNT(*) from tehuda where name = #{name};")
   int selectTehudaCount(String name);
 
+  @Select("SELECT name from tehuda where id = #{id};")
+  String selectNameById(int id);
+
 }
