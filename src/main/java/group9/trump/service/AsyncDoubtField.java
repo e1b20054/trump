@@ -50,9 +50,9 @@ public class AsyncDoubtField {
   DoubtResultMapper DRMapper;
 
   @Transactional
-  public void syncDoubtField(int number, String mark, int turn, String name, String nextname) {
+  public void syncDoubtField(int number, String mark, int turn, String name, String nextname, int gameturn) {
 
-    FMapper.insertField(number, mark, turn, name, nextname);
+    FMapper.insertField(number, mark, turn, name, nextname, gameturn);
 
     // 非同期でDB更新したことを共有する際に利用する
     this.dbUpdated = true;
@@ -61,24 +61,23 @@ public class AsyncDoubtField {
   // @Transactional
   // public void syncDoubtResult(String result,String name) {
 
-  //   DRMapper.insertResult(result,name);
+  // DRMapper.insertResult(result,name);
 
-  //   // 非同期でDB更新したことを共有する際に利用する
-  //   this.dbUpdated = true;
+  // // 非同期でDB更新したことを共有する際に利用する
+  // this.dbUpdated = true;
   // }
 
   public Field syncShowDoubt() {
     return FMapper.selectFieldOne();
   }
 
-  public DoubtResult syncShowResult(){
+  public DoubtResult syncShowResult() {
     return DRMapper.selectOne();
   }
 
   @Async
   public void asyncShowDoubtField(SseEmitter emitter) {
     dbUpdated = true; // dbUpdatedがtrueなら動く
-    System.out.println("a");
     try {
       while (true) {// 無限ループ
         // DBが更新されていなければ0.5s休み
@@ -89,8 +88,6 @@ public class AsyncDoubtField {
         // DBが更新されていれば更新後のフルーツリストを取得してsendし，1s休み，dbUpdatedをfalseにする
         Field field = this.syncShowDoubt();
         emitter.send(field);
-        // DoubtResult doubtresult = this.syncShowResult();
-        // emitter.send(doubtresult);
 
         TimeUnit.MILLISECONDS.sleep(1000);
         dbUpdated = false;

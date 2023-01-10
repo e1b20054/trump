@@ -7,6 +7,7 @@ public class Field {
   int turn;
   String name;
   String nextname;
+  int gameturn;
 
   public int getId() {
     return id;
@@ -54,5 +55,13 @@ public class Field {
 
   public void setNextname(String nextname) {
     this.nextname = nextname;
+  }
+
+  public int getGameturn() {
+    return gameturn;
+  }
+
+  public void setGameturn(int gameturn) {
+    this.gameturn = gameturn;
   }
 }

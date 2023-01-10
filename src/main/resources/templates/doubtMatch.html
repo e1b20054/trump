@@ -4,6 +4,37 @@
 <head>
   <meta charset="utf-8">
   <title>doubtMatch</title>
+
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/doubtWaitSse');
+      sse.onmessage = function (event) {
+        console.log("sse.onmessage")
+        console.log(event.data);
+        var chambers = JSON.parse(event.data);
+        if (chambers[0].oya == true) {
+          var chamber = "";
+          var div_bgn = "<div>";
+          chamber += div_bgn;
+          var h3 = "<h3>入室メンバ</h3>";
+          chamber += h3;
+          var ul_bgn = "<ul>";
+          chamber += ul_bgn;
+          for (var i = 0; i < chambers.length; i++) {
+            var li = "<li>" + chambers[i].name + "</li>";
+            chamber += li;
+          }
+          var ul_end = "</ul>";
+          chamber += ul_end;
+          var div_end = "</div>";
+          chamber += div_end;
+          console.log(chamber);
+          var member = document.getElementById("member");
+          member.innerHTML = chamber;
+        }
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -11,31 +42,38 @@
 
   <div th:if="${user}">
     <h2>ようこそ [[${user}]]</h2>
-    <h3>全員が揃うまで少しお待ちください</h3>
+    <h3 id="start">開始まで少しお待ちください</h3>
   </div>
 
-  <br />
-
-  <div>
-    <h3>対戦相手</h3>
+  <div th:if="${DChambers}" id="member">
+    <h3>入室メンバ</h3>
+    <ul>
+      <li th:each="DChambers : ${DChambers}">[[${DChambers.name}]]</li>
+    </ul>
   </div>
 
-  <br />
-
-  <tbody sec:authorize="hasRole('ROLE_ADMIN')">
+  <div th:if="${chamber.getOya() == true}">
     <div>
       <h3><a href="/doubtFightStart">スタート</a></h3>
-      <div>あなたがスタートすることで手札が配られます.</div>
     </div>
-  </tbody>
-
-  <tbody sec:authorize="hasRole('ROLE_USER')">
+    <div>あなたは最初の入室者です. </div>
+    <div>4人が集まり, 準備ができたら「スタート」を押してください. </div>
+  </div>
+  <div th:if="${chamber.getOya() == false}">
     <div>
-      <h3><a href="/doubtFight">参加する</a></h3>
-      <div>管理者がスタートしています. 参加するを押して参加しましょう.</div>
+      <h3><a href="/doubtFight">ゲームスタート</a></h3>
     </div>
-  </tbody>
+    <div>最初の入室者がスタートしてから, ゲームスタートを押してください. (先に入ってしまっても, スタートされれば手札が配られます.)</div>
+  </div>
 
+  <h3>ルール説明</h3>
+  ①手札が配られると, 親から順にプレイヤーはカードを1枚ずつA、2、3、・・・、10、J、Q、Kの順に, カードを出していきます.Kの後は再びAから順にカードを出していきます。
+  <br />②このゲームにパスはなく, 自分の番が来た時に順番通りの数字が出せない場合は, 手札にある別のカードを出してその場をしのぐことが出来ます. 正しいカードを持っている場合も,
+  順番通りではない違う数字のカードを出しても構いません.
+  <br />③参加するプレイヤは, カードを出したプレイヤが順番通りの正しいカードを出していないと感じれば, ダウト宣言が出来ます.
+  <br />④ダウト宣言をされたカードが, 正しいカード出なかった場合, カードを出したプレやは場に出されたカードをすべて手札に加えるペナルティを受けます.
+  <br />逆に, そのカードが正しいカードだった場合は, ダウト宣言をしたプレイヤが, 場に出されたカードを全て手札に加えるペナルティとなります.
+  <br />⑤一番最初に手札を無くしたプレイヤが勝者となります.
 </body>
 
 </html>

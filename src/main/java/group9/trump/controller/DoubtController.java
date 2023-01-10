@@ -18,7 +18,6 @@ import group9.trump.model.Chamber;
 import group9.trump.model.TrumpMapper;
 import group9.trump.model.Trump;
 import group9.trump.model.DeckMapper;
-import group9.trump.model.Tehuda;
 import group9.trump.model.Deck;
 import group9.trump.model.TehudaMapper;
 import group9.trump.model.Tehuda;
@@ -26,8 +25,10 @@ import group9.trump.model.FieldMapper;
 import group9.trump.model.Field;
 import group9.trump.model.DoubtResultMapper;
 import group9.trump.model.DoubtResult;
+import group9.trump.model.DoubtChamberMapper;
+import group9.trump.model.DoubtChamber;
 import group9.trump.service.AsyncDoubtField;
-import group9.trump.service.AsyncDoubtResult;
+import group9.trump.service.AsyncDoubtWait;
 
 @Controller
 public class DoubtController {
@@ -51,10 +52,13 @@ public class DoubtController {
   DoubtResultMapper DRMapper;
 
   @Autowired
+  DoubtChamberMapper DCMapper;
+
+  @Autowired
   AsyncDoubtField asyncDoubtField;
 
   @Autowired
-  AsyncDoubtResult asyncDoubtResult;
+  AsyncDoubtWait asyncDoubtWait;
 
   @GetMapping("/doubt")
   public String doubt(Principal prin, ModelMap model) {
@@ -66,8 +70,26 @@ public class DoubtController {
 
   @GetMapping("/doubtMatch")
   public String doubtMatch(Principal prin, ModelMap model) {
+    int flag = 0;
     String loginUser = prin.getName();
+    ArrayList<DoubtChamber> DChambers = DCMapper.selectAll();
+    DoubtChamber DChamber = DCMapper.selectByName(loginUser);
+    if (DChamber == null) {
+      if (DChambers.size() >= 4) {
+        flag = 1;
+        return "memorySkip.html";
+      }
+    }
+
+    if (DChamber == null && flag == 0) {
+      asyncDoubtWait.syncInsertDoubtChamber(loginUser);
+      DChamber = DCMapper.selectByName(loginUser);
+    }
+
+    DChambers = DCMapper.selectAll();
     model.addAttribute("user", loginUser);
+    model.addAttribute("chamber", DChamber);
+    model.addAttribute("DChambers", DChambers);
     return "doubtMatch.html";
   }
 
@@ -90,20 +112,26 @@ public class DoubtController {
     }
 
     for (int k = 0; k < Tehuda.size(); k = k + 4) {
-      TTMapper.insertTehuda(Tehuda.get(k).getNumber(), Tehuda.get(k).getMark(), "user1");
-      TTMapper.insertTehuda(Tehuda.get(k + 1).getNumber(), Tehuda.get(k + 1).getMark(), "user2");
-      TTMapper.insertTehuda(Tehuda.get(k + 2).getNumber(), Tehuda.get(k + 2).getMark(), "user3");
-      TTMapper.insertTehuda(Tehuda.get(k + 3).getNumber(), Tehuda.get(k + 3).getMark(), "admin");
+      TTMapper.insertTehuda(Tehuda.get(k).getNumber(), Tehuda.get(k).getMark(), DCMapper.selectNameById(1));
+      TTMapper.insertTehuda(Tehuda.get(k + 1).getNumber(), Tehuda.get(k + 1).getMark(), DCMapper.selectNameById(2));
+      TTMapper.insertTehuda(Tehuda.get(k + 2).getNumber(), Tehuda.get(k + 2).getMark(), DCMapper.selectNameById(3));
+      TTMapper.insertTehuda(Tehuda.get(k + 3).getNumber(), Tehuda.get(k + 3).getMark(), DCMapper.selectNameById(4));
     }
 
     int turn = 13;
-    String nextname = "admin";
-    asyncDoubtField.syncDoubtField(0, "♠", turn, loginUser, nextname);
+    int gameturn = 0;
+    String nextname = DCMapper.selectNameById(1);
+    asyncDoubtField.syncDoubtField(0, "♠", turn, loginUser, nextname, gameturn);
     model.addAttribute("nextname", nextname);
     Tehuda = TTMapper.selectAllOrder();
     model.addAttribute("tehuda", Tehuda);
     ArrayList<Deck> trump = DMapper.selectAll();
     model.addAttribute("trump", trump);
+    DoubtResult result = DRMapper.selectOne();
+    model.addAttribute("result", result);
+    final Field field = this.asyncDoubtField.syncShowDoubt();
+    model.addAttribute("field", field);
+
     return "doubtFight.html";
   }
 
@@ -115,11 +143,33 @@ public class DoubtController {
     final Field field = this.asyncDoubtField.syncShowDoubt();
     model.addAttribute("field", field);
 
-    final DoubtResult result = this.asyncDoubtResult.syncShowResult();
+    DoubtResult result = DRMapper.selectOne();
     model.addAttribute("result", result);
 
     ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
     model.addAttribute("tehuda", Tehuda);
+
+    String name1 = DCMapper.selectNameById(1);
+    String name2 = DCMapper.selectNameById(2);
+    String name3 = DCMapper.selectNameById(3);
+    String name4 = DCMapper.selectNameById(4);
+
+    int name1TehudaCount = TTMapper.selectTehudaCount(name1);
+    int name2TehudaCount = TTMapper.selectTehudaCount(name2);
+    int name3TehudaCount = TTMapper.selectTehudaCount(name3);
+    int name4TehudaCount = TTMapper.selectTehudaCount(name4);
+    String name1Name = DCMapper.selectNameById(1);
+    String name2Name = DCMapper.selectNameById(2);
+    String name3Name = DCMapper.selectNameById(3);
+    String name4Name = DCMapper.selectNameById(4);
+    model.addAttribute("name1TehudaCount", name1TehudaCount);
+    model.addAttribute("name2TehudaCount", name2TehudaCount);
+    model.addAttribute("name3TehudaCount", name3TehudaCount);
+    model.addAttribute("name4TehudaCount", name4TehudaCount);
+    model.addAttribute("name1", name1Name);
+    model.addAttribute("name2", name2Name);
+    model.addAttribute("name3", name3Name);
+    model.addAttribute("name4", name4Name);
 
     return "doubtFight.html";
   }
@@ -132,6 +182,8 @@ public class DoubtController {
 
     if (nextname.equals(loginUser)) {
       int turn = FMapper.selectTurnOne();
+      int gameturn = FMapper.selectGameTurnOne();
+      gameturn++;
       turn++;
       if (turn == 14) {
         turn = 1;
@@ -139,34 +191,61 @@ public class DoubtController {
       Tehuda putcard = TTMapper.selectById(selectedcard);
       TTMapper.deleteTehudaById(selectedcard);
 
-      if (nextname.equals("user3")) {
-        nextname = "admin";
-      } else if (nextname.equals("admin")) {
-        nextname = "user1";
-      } else if (nextname.equals("user1")) {
-        nextname = "user2";
-      } else if (nextname.equals("user2")) {
-        nextname = "user3";
+      String name1 = DCMapper.selectNameById(1);
+      String name2 = DCMapper.selectNameById(2);
+      String name3 = DCMapper.selectNameById(3);
+      String name4 = DCMapper.selectNameById(4);
+
+      if (nextname.equals(name4)) {
+        nextname = name1;
+      } else if (nextname.equals(name1)) {
+        nextname = name2;
+      } else if (nextname.equals(name2)) {
+        nextname = name3;
+      } else if (nextname.equals(name3)) {
+        nextname = name4;
       }
+
+      int name1TehudaCount = TTMapper.selectTehudaCount(name1);
+      int name2TehudaCount = TTMapper.selectTehudaCount(name2);
+      int name3TehudaCount = TTMapper.selectTehudaCount(name3);
+      int name4TehudaCount = TTMapper.selectTehudaCount(name4);
+      String name1Name = DCMapper.selectNameById(1);
+      String name2Name = DCMapper.selectNameById(2);
+      String name3Name = DCMapper.selectNameById(3);
+      String name4Name = DCMapper.selectNameById(4);
+      model.addAttribute("name1TehudaCount", name1TehudaCount);
+      model.addAttribute("name2TehudaCount", name2TehudaCount);
+      model.addAttribute("name3TehudaCount", name3TehudaCount);
+      model.addAttribute("name4TehudaCount", name4TehudaCount);
+      model.addAttribute("name1", name1Name);
+      model.addAttribute("name2", name2Name);
+      model.addAttribute("name3", name3Name);
+      model.addAttribute("name4", name4Name);
+
       if (FMapper.selectNumberOne() == 0) {
         FMapper.deleteField();
       }
       model.addAttribute("nextname", nextname);
-      asyncDoubtField.syncDoubtField(putcard.getNumber(), putcard.getMark(), turn, loginUser, nextname);
+      asyncDoubtField.syncDoubtField(putcard.getNumber(), putcard.getMark(), turn, loginUser, nextname, gameturn);
       final Field field = this.asyncDoubtField.syncShowDoubt();
       model.addAttribute("field", field);
       ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
       model.addAttribute("tehuda", Tehuda);
+      DoubtResult result = DRMapper.selectOne();
+      model.addAttribute("result", result);
       if (TTMapper.selectTehudaCount(loginUser) == 0) {
+        asyncDoubtField.syncDoubtField(putcard.getNumber(), putcard.getMark(), turn, loginUser, "<<ゲーム終了>>", gameturn);
         Chamber chamber = CMapper.selectByName(loginUser);
         CMapper.updateWin(chamber.getWin() + 1, loginUser);
         chamber = CMapper.selectByName(loginUser);
         model.addAttribute("chamber", chamber);
+        DCMapper.deleteAll();
         return "doubtEnd.html";
       }
       return "doubtFight.html";
     }
-    final DoubtResult result = this.asyncDoubtResult.syncShowResult();
+    DoubtResult result = DRMapper.selectOne();
     model.addAttribute("result", result);
     final Field field = this.asyncDoubtField.syncShowDoubt();
     model.addAttribute("field", field);
@@ -182,10 +261,10 @@ public class DoubtController {
     return sseEmitter;
   }
 
-  @GetMapping("/doubtFight/step2")
-  public SseEmitter step2() {
+  @GetMapping("/doubtWaitSse")
+  public SseEmitter doubtWaitSse() {
     final SseEmitter sseEmitter = new SseEmitter();
-    this.asyncDoubtResult.asyncShowDoubtResult(sseEmitter);
+    this.asyncDoubtWait.asyncReloadDoubtMatch(sseEmitter);
     return sseEmitter;
   }
 
@@ -194,6 +273,27 @@ public class DoubtController {
     String judge = "";
     String user = "";
     int i = 1;
+
+    String name1 = DCMapper.selectNameById(1);
+    String name2 = DCMapper.selectNameById(2);
+    String name3 = DCMapper.selectNameById(3);
+    String name4 = DCMapper.selectNameById(4);
+    int name1TehudaCount = TTMapper.selectTehudaCount(name1);
+    int name2TehudaCount = TTMapper.selectTehudaCount(name2);
+    int name3TehudaCount = TTMapper.selectTehudaCount(name3);
+    int name4TehudaCount = TTMapper.selectTehudaCount(name4);
+    String name1Name = TTMapper.selectNameById(1);
+    String name2Name = TTMapper.selectNameById(2);
+    String name3Name = TTMapper.selectNameById(3);
+    String name4Name = TTMapper.selectNameById(4);
+    model.addAttribute("name1TehudaCount", name1TehudaCount);
+    model.addAttribute("name2TehudaCount", name2TehudaCount);
+    model.addAttribute("name3TehudaCount", name3TehudaCount);
+    model.addAttribute("name4TehudaCount", name4TehudaCount);
+    model.addAttribute("name1", name1Name);
+    model.addAttribute("name2", name2Name);
+    model.addAttribute("name3", name3Name);
+    model.addAttribute("name4", name4Name);
 
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
@@ -221,15 +321,16 @@ public class DoubtController {
       }
     }
 
+    int gameturn = FMapper.selectGameTurnOne();
+    DRMapper.insertResult(judge, user, gameturn);
+    DoubtResult result = DRMapper.selectOne();
+    model.addAttribute("result", result);
     int turn = FMapper.selectTurnOne();
     String nextname = FMapper.selectNextOne();
     FMapper.deleteField();
-    asyncDoubtField.syncDoubtField(0, "♠", turn, loginUser, nextname);
+    asyncDoubtField.syncDoubtField(0, "♠", turn, loginUser, nextname, gameturn);
     field = this.asyncDoubtField.syncShowDoubt();
     // DRMapper.insertResult(result,user);
-    asyncDoubtResult.syncDoubtResult(judge, user);
-    final DoubtResult result = this.asyncDoubtResult.syncShowResult();
-    model.addAttribute("result", result);
     model.addAttribute("field", field);
     ArrayList<Tehuda> Tehuda = TTMapper.selectAllOrder();
     model.addAttribute("tehuda", Tehuda);
