@@ -180,17 +180,33 @@ public class The_GameController {
       int p10 = te + 10;
       int m10 = te - 10;
       if (id == 1 && (te > n1 || p10 == n1)) {
-        TGTMapper.deleteTehuda(te);
-        this.asyncThe_Game.syncThe_Game(1, te);
+        if (TGTMapper.deleteTehuda(te)) {
+          this.asyncThe_Game.syncThe_Game(1, te);
+        } else {
+          error = "間違え";
+          model.addAttribute("error", error);
+        }
       } else if (id == 2 && (te > n2 || p10 == n2)) {
-        TGTMapper.deleteTehuda(te);
-        this.asyncThe_Game.syncThe_Game(2, te);
+        if (TGTMapper.deleteTehuda(te)) {
+          this.asyncThe_Game.syncThe_Game(2, te);
+        } else {
+          error = "間違え";
+          model.addAttribute("error", error);
+        }
       } else if (id == 3 && (te < n3 || m10 == n3)) {
-        TGTMapper.deleteTehuda(te);
-        this.asyncThe_Game.syncThe_Game(3, te);
+        if (TGTMapper.deleteTehuda(te)) {
+          this.asyncThe_Game.syncThe_Game(3, te);
+        } else {
+          error = "間違え";
+          model.addAttribute("error", error);
+        }
       } else if (id == 4 && (te < n4 || m10 == n4)) {
-        TGTMapper.deleteTehuda(te);
-        this.asyncThe_Game.syncThe_Game(4, te);
+        if (TGTMapper.deleteTehuda(te)) {
+          this.asyncThe_Game.syncThe_Game(4, te);
+        } else {
+          error = "間違え";
+          model.addAttribute("error", error);
+        }
       } else {
         error = "間違え";
         model.addAttribute("error", error);
