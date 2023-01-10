@@ -116,13 +116,14 @@
     </div>
   </div>
 
+  <div>場1～2は昇順、3～4は降順に並べる(ちょうど10は例外)</div>
+  <div>テキストボックスに2つの数字を入れた後提出ボタンを押す</div>
+
   <form action="/trump/the_gameFight/shouhi" method="post">
     場(1～4の選択)<input type="number" name="id" /> <br />
     手札の選択(赤い数字を選択)<input type="number" name="te" />
     <input type="submit" value="提出">
   </form>
-  <div>場1～2は昇順、3～4は降順に並べる(ちょうど10は例外)</div>
-  <div>テキストボックスに2つの数字を入れた後提出ボタンを押す</div>
 
   <div th:if="${error}">
     [[${error}]]
