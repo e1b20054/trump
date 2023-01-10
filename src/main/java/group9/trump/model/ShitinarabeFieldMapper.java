@@ -17,6 +17,9 @@ public interface ShitinarabeFieldMapper {
   @Select("SELECT * from shitinarabefield;")
   ArrayList<ShitinarabeField> selectAll();
 
+  @Select("SELECT * from shitinarabefield where mark = #{mark} and number = #{number};")
+  ShitinarabeField selectCard(String mark, int number);
+
   @Update("UPDATE shitinarabefield SET Field = TRUE where mark = #{mark} and number = #{number};")
   void updateField(String mark, int number);
 

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.security.Principal;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -21,7 +22,7 @@ import group9.trump.model.ShitinarabeMatchMapper;
 import group9.trump.model.TrumpMapper;
 import group9.trump.model.Trump;
 import group9.trump.model.ChamberMapper;
-import group9.trump.model.Chamber;
+//import group9.trump.model.Chamber;
 import group9.trump.service.AsyncShitinarabe;
 
 @Controller
@@ -69,9 +70,9 @@ public class ShitinarabeController {
   public String trump(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     ArrayList<ShitinarabeField> sfmapper = SFMapper.selectAll();
+    Shitinarabe tmp = new Shitinarabe();
     if (sfmapper.size() == 0) {
       ArrayList<Trump> trumps = TMapper.selectAll();
-      Shitinarabe tmp = new Shitinarabe();
       ShitinarabeField field = new ShitinarabeField();
       Trump card = new Trump();
 
@@ -85,9 +86,21 @@ public class ShitinarabeController {
       }
 
       Collections.shuffle(trumps); // トランプシャッフル
+      int count = 0;
+      int n = 0;
+
+      while (count != 4) {
+        if ((trumps.get(n)).getNumber() == 7) {
+          trumps.remove(n);
+          count++;
+        } else {
+          n++;
+        }
+      }
+
       for (int i = 1; i < 5; i++) {
-        for (int j = 0; j < 13; j++) {
-          card = trumps.get((i - 1) * 13 + j);
+        for (int j = 0; j < 12; j++) {
+          card = trumps.get((i - 1) * 12 + j);
           tmp.setNumber(card.getNumber());
           tmp.setMark(card.getMark());
           if (i == 1) {
@@ -97,70 +110,120 @@ public class ShitinarabeController {
             tmp.setName("user2");
           }
           if (i == 3) {
-            tmp.setName("user1");
+            tmp.setName("user3");
           }
           if (i == 4) {
-            tmp.setName("user2");
+            tmp.setName("user4");
           }
 
           tmp.setState("tehuda");
           SMapper.insertShitinarabe(tmp.getNumber(), tmp.getMark(), tmp.getName(), tmp.getState());
         }
       }
-
-      tmp = SMapper.selectCard("♦", 7);
-      SFMapper.updateField("♦", 7);
-      SMapper.updateTehuda(tmp.getId());
-      tmp = SMapper.selectCard("♠", 7);
-      SFMapper.updateField("♠", 7);
-      SMapper.updateTehuda(tmp.getId());
-      tmp = SMapper.selectCard("♣", 7);
-      SFMapper.updateField("♣", 7);
-      SMapper.updateTehuda(tmp.getId());
-      tmp = SMapper.selectCard("♥", 7);
-      SFMapper.updateField("♥", 7);
-      SMapper.updateTehuda(tmp.getId());
+    } else {
+      String count;
+      count = SMMapper.selectFlag(-1);
+      int c = Integer.valueOf(count) + 1;
+      if (c == 2) {
+        SFMapper.updateField("♦", 7);
+        SFMapper.updateField("♠", 7);
+        SFMapper.updateField("♣", 7);
+        SFMapper.updateField("♥", 7);
+      }
+      asyncShitinarabe.syncUpdateStartflag(Integer.toString(c));
     }
 
+    String str = "";
+    model.addAttribute("message", str);
     ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginUser);
-    ArrayList<ShitinarabeField> fieldlist = SFMapper.selectAll();
-    model.addAttribute("field", fieldlist);
     model.addAttribute("tehuda", tehuda);
-    return "shitinarabe.html";
+    model.addAttribute("user", loginUser);
+    return "shitinarabeFight.html";
   }
 
-  @GetMapping("/card")
-  public String card(@RequestParam String mark, int number, Principal prin, ModelMap model) {
+  @GetMapping("/shitinarabeStart")
+  public String shitinarabeStart(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
-    Shitinarabe right = new Shitinarabe();
-    Shitinarabe left = new Shitinarabe();
-    Shitinarabe tmp = new Shitinarabe();
+    String nextName = SMMapper.selectNameById(1);
+    String name;
 
-    if (number == 13) {
-      right = SMapper.selectCard(mark, number - 12);
-    } else {
-      right = SMapper.selectCard(mark, number + 1);
+    for (int i = 1; i < 5; i++) {
+      name = SMMapper.selectNameById(i);
+      if (i != 4) {
+        SMMapper.updateSmatch(i + 1, name);
+      } else {
+        SMMapper.updateSmatch(1, name);
+      }
     }
-    if (number == 1) {
-      left = SMapper.selectCard(mark, number + 12);
-    } else {
-      left = SMapper.selectCard(mark, number - 1);
-    }
+    asyncShitinarabe.syncInsertSMatch(7, "all", loginUser, nextName);
 
-    if ("field".equals(right.getState()) || "field".equals(left.getState())) {
-      tmp = SMapper.selectCard(mark, number);
-      SFMapper.updateField(mark, number);
-      SMapper.updateTehuda(tmp.getId());
-      asyncShitinarabe.syncInsertSMatch(number, mark, loginUser, "xxx");
-      model.addAttribute("flag", "true");
-    } else {
-      model.addAttribute("flag", "false");
-    }
+    String str = "";
+    model.addAttribute("message", str);
     ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginUser);
-    ArrayList<ShitinarabeField> fieldlist = SFMapper.selectAll();
-    model.addAttribute("field", fieldlist);
     model.addAttribute("tehuda", tehuda);
+    model.addAttribute("user", loginUser);
     return "shitinarabeFight.html";
+  }
+
+  @PostMapping("/shitinarabeFight")
+  public String shitinarabeFight(Principal prin, ModelMap model, @RequestParam int id) {
+    String mark = SMapper.selectMarkById(id);
+    int number = SMapper.selectNumberById(id);
+    String loginUser = prin.getName();
+    ShitinarabeField right = new ShitinarabeField();
+    ShitinarabeField left = new ShitinarabeField();
+
+    if (SMMapper.selectId() != 3 && SMMapper.selectNextname().equals(loginUser)) {
+      if (number == 13) {
+        right = SFMapper.selectCard(mark, number - 12);
+      } else {
+        right = SFMapper.selectCard(mark, number + 1);
+      }
+      if (number == 1) {
+        left = SFMapper.selectCard(mark, number + 12);
+      } else {
+        left = SFMapper.selectCard(mark, number - 1);
+      }
+
+      if (right.getField() == true || left.getField() == true) {
+        SFMapper.updateField(mark, number);
+        SMapper.updateTehuda(mark, number);
+        String nextName = SMMapper.selectNextnameByName(loginUser);
+        asyncShitinarabe.syncInsertSMatch(number, mark, loginUser, nextName);
+      }
+    }
+    String str = "";
+    model.addAttribute("message", str);
+    ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginUser);
+    if (tehuda.size() == 0) {
+      SMMapper.insertSmatch(-1, null, loginUser, null);
+    } else {
+      model.addAttribute("tehuda", tehuda);
+    }
+    model.addAttribute("user", loginUser);
+    return "shitinarabeFight.html";
+  }
+
+  @GetMapping("/skip")
+  public String skip(Principal prin, ModelMap model) {
+    String loginUser = prin.getName();
+    if (SMMapper.selectId() != 3 && SMMapper.selectNextname().equals(loginUser)) {
+      String nextName = SMMapper.selectNextnameByName(loginUser);
+      asyncShitinarabe.syncInsertSMatch(0, "null", loginUser, nextName);
+    }
+    String str = "";
+    model.addAttribute("message", str);
+    ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginUser);
+    model.addAttribute("tehuda", tehuda);
+    model.addAttribute("user", loginUser);
+    return "shitinarabeFight.html";
+  }
+
+  @GetMapping("/shitinarabeEnd")
+  public String shitinarabeEnd(Principal prin, ModelMap model) {
+    String winner = SMMapper.selectWinner();
+    model.addAttribute("winner", winner);
+    return "shitinarabeEnd.html";
   }
 
   @GetMapping("/shitinarabeSse")

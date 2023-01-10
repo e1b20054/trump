@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import group9.trump.model.ShitinarabeMatch;
 import group9.trump.model.ShitinarabeMatchMapper;
 import group9.trump.model.ChamberMapper;
-import group9.trump.model.Chamber;
+//import group9.trump.model.Chamber;
 
 @Service
 public class AsyncShitinarabe {
@@ -41,7 +41,13 @@ public class AsyncShitinarabe {
 
   @Transactional
   public void syncInsertStartflag() {
-    SMMapper.insertSmatch(-1, "null", "null", "null");
+    SMMapper.insertSmatch(-1, "null", "1", "null");
+    this.dbUpdated = true;
+  }
+
+  @Transactional
+  public void syncUpdateStartflag(String count) {
+    SMMapper.updateStartflag(-1, count);
     this.dbUpdated = true;
   }
 
