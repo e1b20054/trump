@@ -71,12 +71,11 @@ public class The_GameController {
     String loginUser = prin.getName();
     Chamber chamber = CMapper.selectByName(loginUser);
     model.addAttribute("chamber", chamber);
-    TurnMapper.delete();
     return "the_game.html";
   }
 
   @GetMapping("/the_gameMatch")
-  public String Tehuda(Principal prin, ModelMap model) {
+  public String Deck_in(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     model.addAttribute("loginUser", loginUser);
     int x1 = TGFMapper.selectNumber(1);
@@ -103,10 +102,11 @@ public class The_GameController {
     }
     ArrayList<Integer> the_game = TGMapper.selectAll();
     Collections.shuffle(the_game);
-    for (int j = 0; j < 15; j++) {
+    for (int j = 0; j < the_game.size(); j++) {
       TGDMapper.insertDeck(the_game.get(j));
     }
-    TurnMapper.insert(loginUser, TGTMapper.selectCount(loginUser));
+    // TurnMapper.insert(loginUser, TGTMapper.selectCount(loginUser));
+    this.asyncTurn.syncturnUser(loginUser);
     return "the_gameMatch.html";
   }
 
@@ -114,9 +114,18 @@ public class The_GameController {
   public String di(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     model.addAttribute("loginUser", loginUser);
-    ArrayList<String> turn = TurnMapper.selectOther(loginUser);
+    // ArrayList<String> turn = TurnMapper.selectAllUser();
+    final ArrayList<String> turn = this.asyncTurn.syncUser();
     model.addAttribute("turn", turn);
     return "the_gameMatch.html";
+  }
+
+  // 追加--------------------------------------
+  @GetMapping("/the_gameFight/step3")
+  public SseEmitter step3() {
+    final SseEmitter sseEmitter = new SseEmitter();
+    this.asyncTurn.asyncShowUser(sseEmitter);
+    return sseEmitter;
   }
 
   // ---追加
@@ -160,6 +169,9 @@ public class The_GameController {
       this.asyncTurn.syncTurn();
     }
     String tasi = TurnMapper.selectUser();
+    if (tasi == null) {
+      tasi = "";
+    }
     if (tasi.equals(loginUser)) {
       int n1 = TGFMapper.selectNumber(1);
       int n2 = TGFMapper.selectNumber(2);
@@ -210,7 +222,6 @@ public class The_GameController {
     return "the_gameFight.html";
   }
 
-  // 追加--------------------------------------
   @GetMapping("/the_gameFight/step1")
   public SseEmitter step1() {
     final SseEmitter sseEmitter = new SseEmitter();
@@ -266,7 +277,23 @@ public class The_GameController {
     return "the_gameFight.html";
   }
 
-  // 追加--------------------------------------
+  @PostMapping("/the_gameFight/win")
+  public String admin_win(Principal prin, ModelMap model) {
+    String loginUser = prin.getName();
+    TGDMapper.delete();
+    final ArrayList<The_Game_Field> the_game_field1 = this.asyncThe_Game.syncShowThe_Game(1);
+    final ArrayList<The_Game_Field> the_game_field2 = this.asyncThe_Game.syncShowThe_Game(2);
+    final ArrayList<The_Game_Field> the_game_field3 = this.asyncThe_Game.syncShowThe_Game(3);
+    final ArrayList<The_Game_Field> the_game_field4 = this.asyncThe_Game.syncShowThe_Game(4);
+    model.addAttribute("the_game_field1", the_game_field1);
+    model.addAttribute("the_game_field2", the_game_field2);
+    model.addAttribute("the_game_field3", the_game_field3);
+    model.addAttribute("the_game_field4", the_game_field4);
+    ArrayList<Integer> tehuda = TGTMapper.selectAll(loginUser);
+    model.addAttribute("tehuda", tehuda);
+    return "the_gameFight.html";
+  }
+
   @GetMapping("/the_gameFight/step2")
   public SseEmitter step2() {
     final SseEmitter sseEmitter = new SseEmitter();
@@ -281,19 +308,24 @@ public class The_GameController {
     this.saisyo = true;
     int d = TGDMapper.selectCount();
     int t = TGTMapper.selectCountAll();
+    model.addAttribute("d", d);
+    model.addAttribute("t", t);
     String win = "win";
     String lose = "lose";
     Chamber chamber = CMapper.selectByName(loginUser);
     asyncTurn.syncEnd();
     if (d + t < 10) {
-      CMapper.updateWin(chamber.getWin() + 1, loginUser);
-      chamber = CMapper.selectByName(loginUser);
+      if (!(loginUser.equals("admin"))) {
+        CMapper.updateWin(chamber.getWin() + 1, loginUser);
+        chamber = CMapper.selectByName(loginUser);
+      }
       model.addAttribute("chamber", chamber);
       model.addAttribute("win", win);
     } else {
       model.addAttribute("lose", lose);
       model.addAttribute("chamber", chamber);
     }
+    TurnMapper.delete();
     return "the_gameResult.html";
   }
 
