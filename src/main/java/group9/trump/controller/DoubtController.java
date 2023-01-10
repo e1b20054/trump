@@ -99,8 +99,13 @@ public class DoubtController {
     DMapper.deleteDeck();
     TTMapper.deleteTehuda();
     DRMapper.deleteResult();
+
     String loginUser = prin.getName();
     model.addAttribute("user", loginUser);
+    if ((DCMapper.selectByName(loginUser)).getOya() == true) {
+      asyncDoubtWait.syncUpdateOyaFalse();
+    }
+
     int i = 0;
     ArrayList<Tehuda> Tehuda = new ArrayList<>();
     ArrayList<Tehuda> trumps = TMapper.selectAllTehuda();
