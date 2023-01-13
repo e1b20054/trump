@@ -22,7 +22,7 @@ import group9.trump.model.ShitinarabeMatchMapper;
 import group9.trump.model.TrumpMapper;
 import group9.trump.model.Trump;
 import group9.trump.model.ChamberMapper;
-//import group9.trump.model.Chamber;
+import group9.trump.model.Chamber;
 import group9.trump.service.AsyncShitinarabe;
 
 @Controller
@@ -49,6 +49,12 @@ public class ShitinarabeController {
   public String shitinarabe(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     ArrayList<ShitinarabeMatch> SChambers = SMMapper.selectAll();
+    if (SChambers.size() > 6) {
+      SMapper.deleteShitinarabe();
+      SFMapper.deleteShitinarabeField();
+      SMMapper.deleteShitinarabeMatch();
+      SChambers = SMMapper.selectAll();
+    }
     /*
      * if (MChambers.size() >= 4) {
      * return "memorySkip.html";
@@ -136,6 +142,7 @@ public class ShitinarabeController {
     String str = "";
     model.addAttribute("message", str);
     ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginUser);
+
     model.addAttribute("tehuda", tehuda);
     model.addAttribute("user", loginUser);
     return "shitinarabeFight.html";
@@ -196,6 +203,8 @@ public class ShitinarabeController {
     model.addAttribute("message", str);
     ArrayList<Shitinarabe> tehuda = SMapper.selectTehuda(loginUser);
     if (tehuda.size() == 0) {
+      Chamber chamber = CMapper.selectByName(loginUser);
+      CMapper.updateWin(chamber.getWin() + 1, loginUser);
       SMMapper.insertSmatch(-1, null, loginUser, null);
     } else {
       model.addAttribute("tehuda", tehuda);
