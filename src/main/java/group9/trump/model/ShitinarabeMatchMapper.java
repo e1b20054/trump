@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
-//import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Delete;
 
 @Mapper
 public interface ShitinarabeMatchMapper {
@@ -43,5 +43,8 @@ public interface ShitinarabeMatchMapper {
 
   @Update("UPDATE shitinarabematch SET nextname = #{name} where id = #{id};")
   void updateSmatch(int id, String name);
+
+  @Delete("TRUNCATE TABLE ShitinarabeMatch RESTART IDENTITY")
+  void deleteShitinarabeMatch();
 
 }

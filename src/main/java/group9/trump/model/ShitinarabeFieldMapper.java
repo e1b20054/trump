@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Insert;
-//import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Update;
 //import org.apache.ibatis.annotations.Options;
 
@@ -22,5 +22,8 @@ public interface ShitinarabeFieldMapper {
 
   @Update("UPDATE shitinarabefield SET Field = TRUE where mark = #{mark} and number = #{number};")
   void updateField(String mark, int number);
+
+  @Delete("TRUNCATE TABLE ShitinarabeField RESTART IDENTITY")
+  void deleteShitinarabeField();
 
 }

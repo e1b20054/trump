@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Insert;
-//import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Update;
 //import org.apache.ibatis.annotations.Options;
 
@@ -31,4 +31,7 @@ public interface ShitinarabeMapper {
 
   @Update("UPDATE shitinarabe SET state = 'field' where mark = #{mark} and number = #{number};")
   void updateTehuda(String mark, int number);
+
+  @Delete("TRUNCATE TABLE Shitinarabe RESTART IDENTITY")
+  void deleteShitinarabe();
 }
