@@ -14,7 +14,7 @@
         var field = "";
         var card = "";
         var fcall1 = "を出しました。次は";
-        var fcall2 = "です。(※14 は 1 とみなす)";
+        var fcall2 = "です。";
         var fcall3 = "<br/><br/>次は、";
         var fcall4 = "さんのターンです。";
         var fcall5 = "ターン";
@@ -29,6 +29,9 @@
         var mark = field_list.mark;
         var turn = field_list.turn;
         var turn1 = turn + 1;
+        if (turn1 == 14) {
+          turn1 = 1;
+        }
         var gameturn = field_list.gameturn;
         var user = field_list.nextname;
         field = kakko1 + fcall5 + gameturn + kakko2 + haku + turn + fcall1 + turn1 + fcall2 + fcall3 + user + fcall4;
